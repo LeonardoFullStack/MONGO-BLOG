@@ -1,0 +1,40 @@
+<%- include('partials/header.ejs') %>
+<main>
+<h1>
+    <%= title %>
+</h1>
+<p>
+    <%= msg %>
+</p>
+<div class="containerOne">
+    <div class="gridTitle">
+        <%= data.title %>
+    </div>
+    <div class="gridDate">
+        <%= data.date %>
+    </div>
+    <div class="gridContentOne">
+        <p>Contenido:</p>
+       <p>  <%= data.content %></p>
+    </div>
+    <div class="gridImage">
+        <img class="entryImage" src="<%= data.entryimage %>">
+    </div>
+    
+    <div class="gridNameOne">
+        <%= data.surname %>
+    </div>
+    
+        <div class="gridEditOne">
+            
+            <p>
+                Estracto:<%= data.extract %>
+            </p>
+        
+        </div>
+        
+   
+      
+</div> 
+</main>
+<%- include('partials/footer.ejs') %>

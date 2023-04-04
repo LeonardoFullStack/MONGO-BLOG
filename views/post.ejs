@@ -1,0 +1,19 @@
+<%- include('partials/header.ejs') %>
+<main>
+<h1>
+    <%= title %>
+</h1>
+<p>
+    <%= msg %>
+</p>
+<form method="post" action="/post">
+    <input type="text" name="title" placeholder="título">
+    <input type="text" name="extract" placeholder="Estracto">
+    <input type="text" name="content" placeholder="Contenido">
+    <input type="text" name="entryImage" placeholder="Imagen">
+    <input type="text" name="category" placeholder="Categoría">
+    <input type="submit" value="Publicar">
+
+</form>
+</main>
+<%- include('partials/footer.ejs') %>
