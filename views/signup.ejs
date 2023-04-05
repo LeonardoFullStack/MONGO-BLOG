@@ -18,16 +18,14 @@
 <p>
     <%= msg %>
 </p>
-<form method="post" action="/log/">
+<form method="post" action="/signup">
+    <input type="text" name="name" placeholder="nombre">
+    <input type="text" name="surname" placeholder="Pseudónimo">
     <input type="text" name="email" placeholder="e-mail">
+    <input type="text" name="image" placeholder="URL de tu avatar">
     <input type="password" name="password" placeholder="contraseña">
-    <input type="submit" value="Entrar">
+    <input type="submit" value="Registrar">
 
 </form>
-<a href="/signup">
-    <button>
-        Registrarme
-    </button>
-</a>
 </main>
 <%- include('partials/footer.ejs') %>

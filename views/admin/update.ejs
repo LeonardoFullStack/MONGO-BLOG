@@ -12,10 +12,16 @@
     <input type="hidden" name="oldTitle" placeholder="título" value="<%= data.title %>">
     <input type="text" name="extract" placeholder="Estracto" value="<%= data.extract %>">
     <input type="text" name="content" placeholder="Contenido" value="<%= data.content %>">
+    <img class="miniImg" src="<%= data.entryimage %>">
     <input type="text" name="entryImage" placeholder="Imagen" value="<%= data.entryimage %>">
     <input type="text" name="category" placeholder="Categoría" value="<%= data.category %>">
     <input type="submit" value="Publicar">
 
 </form>
+<a href="/admin/delete/<%= data.title %>">
+    <button>
+        Eliminar
+    </button>
+</a>
 </main>
 <%- include('partials/footer.ejs') %>

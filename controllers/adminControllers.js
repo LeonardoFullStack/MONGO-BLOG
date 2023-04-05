@@ -6,7 +6,7 @@ const { consulta } = require('../helpers/dbConnect')
 
 
 const adminIndex =async (req,res)  => {
-
+console.log('check')
     try {
         const peticion = await consulta('entries/')
         const peticionJson = await peticion.json()
@@ -27,7 +27,7 @@ const adminIndex =async (req,res)  => {
 
 const postEntry = async (req, res) => {
 
-    res.render('post', {
+    res.render('admin/post', {
         title: 'Escribe una entrada',
         msg: 'Rellena los campos'
     })
@@ -53,11 +53,14 @@ const uploadEntry = async (req, res) => {
             const sameEntries = entriesJson.data.filter((item) => item.title == title)
 
             if (sameEntries.length == 0) { //validación para no repetir entrada
-
+                
                 const peticion = await consulta('entries/', 'post', body)
                 const peticionJson = await peticion.json()
                 if (peticionJson.ok) {
-                    res.redirect('/myEntries')
+                    res.render('admin/info', {
+                        title:'Entrada creada',
+                        msg:'Entrada creada con éxito!'
+                    })
                 } else {
                     res.render('post', {
                         title: 'error',
@@ -213,7 +216,11 @@ const updateEntry = async (req, res) => {
                 const peticion = await consulta(`entries/${oldTitle}`, 'put', body)
                 const peticionJson = await peticion.json()
                 if (peticionJson.ok) {
-                res.redirect('/admin/myEntries')
+                    res.render('admin/info', {
+                        title:'Entrada actualizada',
+                        msg:'Entrada actualizada con éxito!'
+                    })
+                
                 } else {
                     res.render('post', {
                         title: 'error',
@@ -265,6 +272,33 @@ const viewOne = async (req,res) => {
     }
 }
 
+const deleteEntry =async (req,res) => {
+    const { email } = req.cookies
+    const title = req.params.title
+    console.log(title,email)
+    body = {
+        email
+    }
+
+    try {
+        const peticion = await consulta(`entries/${title}`, 'delete', body)
+        const peticionJson = await peticion.json()
+        console.log(peticionJson,'eljotason')//aqui el error
+        res.render('admin/info', {
+            title:'Entrada eliminada',
+            msg:'Entrada eliminada con éxito.'
+        })
+    } catch (error) {
+        res.render('error', {
+            title: 'error',
+            msg: 'Contacta con el administrador',
+            error
+        }) 
+    }
+    
+    
+}
+
 
 
 module.exports = {
@@ -275,6 +309,7 @@ module.exports = {
     editEntry,
     updateEntry,
     viewOne,
+    deleteEntry,
     adminIndex
 }
 

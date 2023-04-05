@@ -1,13 +1,15 @@
 const express = require('express')
 const router = express.Router();
 const bodyParser = require('body-parser')
-const {getIndex, checkLogin, logOut} = require('../controllers/loginControllers')
+const {getIndex, checkLogin, logOut, signup, uploadSignup} = require('../controllers/loginControllers')
 const {showEntries, postEntry, uploadEntry, myEntries, getSearch,editEntry,updateEntry, viewOne} = require('../controllers/frontControllers')
 const {validarJwt,validarJwtAdmin} = require('../middleware/validarJwt')
 
 
 
 router.get('/', getIndex)
+router.get('/signup', signup)
+router.post('/signup', uploadSignup)
 router.post('/log', checkLogin)
 
 //rutas protegidas

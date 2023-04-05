@@ -58,7 +58,10 @@ const uploadEntry = async (req, res) => {
                 const peticion = await consulta('entries/', 'post', body)
                 const peticionJson = await peticion.json()
                 if (peticionJson.ok) {
-                    res.redirect('/myEntries')
+                    res.render('info', {
+                        title:'Entrada creada',
+                        msg:'Entrada creada con éxito!'
+                    })
                 } else {
                     res.render('post', {
                         title: 'error',
@@ -211,7 +214,10 @@ const updateEntry = async (req, res) => {
                 const peticion = await consulta(`entries/${oldTitle}`, 'put', body)
                 const peticionJson = await peticion.json()
                 if (peticionJson.ok) {
-                res.redirect('/myEntries')
+                    res.render('info', {
+                        title:'Entrada actualizada',
+                        msg:'Entrada actualizada con éxito!'
+                    })
                 } else {
                     res.render('post', {
                         title: 'error',

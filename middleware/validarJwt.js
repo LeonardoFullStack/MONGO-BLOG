@@ -38,32 +38,35 @@ const validarJwt = (req, res, next) => {
 
 const validarJwtAdmin = (req, res, next) => {
     
-       
-    const aToken = req.cookies['atoken'];
+       console.log('pasi')
+    const zToken = req.cookies['ztoken'];
+     console.log(zToken,'no pasi')
         
 
-        if (!aToken) {
-            return res.render('index', {
-                titulo: 'No has iniciado sesión',
-                msg: 'Inicia sesión para continuar'
+        if (!zToken) {
+            return res.render('error', {
+                title: 'No tienes permisos',
+                msg: 'Inicia sesión como administrador para continuar'
             })
         }
 
         try {
 
-            const payload = jwt.verify(aToken, process.env.JWT_SECRET_KEY2);
+            const payload = jwt.verify(zToken, process.env.JWT_SECRET_KEY2);
             
             req.header.id = payload.uid
             req.header.name = payload.name
+            console.log('payload')
             
 
         } catch (error) {
-            return res.status(401).json({ //aqui hay que poner un render en vez del return mejor
-                ok: false,
-                msg: 'Token no válido'
+            console.log('erri')
+            return res.render('error', {
+                title: 'No has iniciado sesión',
+                msg: 'Inicia sesión para continuar'
             })
         }
-
+        console.log('next')
         next()
 
 
