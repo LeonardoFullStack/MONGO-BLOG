@@ -18,6 +18,7 @@ app.use(cookieParser());
 
 
 app.use('/', require ('./routers/routerFront'))
+app.use('/admin', require ('./routers/routerAdmin'))
 
 
 
