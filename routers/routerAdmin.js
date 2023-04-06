@@ -13,7 +13,7 @@ router.get('/post',validarJwtAdmin, postEntry)
 router.post('/post',validarJwtAdmin, uploadEntry)
 router.get('/edit/:indexEntry',validarJwtAdmin, editEntry)
 router.post('/edit/',validarJwtAdmin, updateEntry)
-router.get('/delete/:title',validarJwtAdmin,deleteEntry)
+router.get('/delete/:id',validarJwtAdmin,deleteEntry)
 router.get('/logout',validarJwtAdmin, logOut)
 router.get('/viewOne/:id',validarJwtAdmin, viewOne)
 

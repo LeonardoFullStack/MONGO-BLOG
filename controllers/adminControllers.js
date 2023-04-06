@@ -273,17 +273,15 @@ const viewOne = async (req,res) => {
 }
 
 const deleteEntry =async (req,res) => {
-    const { email } = req.cookies
-    const title = req.params.title
-    console.log(title,email)
-    body = {
-        email
-    }
+    
+    const id = req.params.id
+    
+   
 
     try {
-        const peticion = await consulta(`entries/${title}`, 'delete', body)
+        const peticion = await consulta(`entries/delbyid/${id}`, 'delete')
         const peticionJson = await peticion.json()
-        console.log(peticionJson,'eljotason')//aqui el error
+        
         res.render('admin/info', {
             title:'Entrada eliminada',
             msg:'Entrada eliminada con éxito.'
