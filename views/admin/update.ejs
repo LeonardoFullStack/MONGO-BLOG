@@ -9,6 +9,7 @@
 <%= data.title %>
 <form method="post" action="/admin/edit">
     <input type="text" name="title" placeholder="título" value="<%= data.title %>">
+    <input type="hidden" name="idEntry" value="<%= data.id_entry %>">
     <input type="hidden" name="oldTitle" placeholder="título" value="<%= data.title %>">
     <input type="text" name="extract" placeholder="Estracto" value="<%= data.extract %>">
     <input type="text" name="content" placeholder="Contenido" value="<%= data.content %>">

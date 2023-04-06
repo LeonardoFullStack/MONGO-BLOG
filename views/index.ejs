@@ -9,22 +9,24 @@
 </head>
 <body>
     <header>
-        
+        <img src="media/newlogo.png" class="logo">
     </header>
 <main>
+    <div class="mainInfo">
 <h1>
     <%= title %>
 </h1>
 <p>
     <%= msg %>
 </p>
-<form method="post" action="/log/">
+</div>
+<form method="post" action="/log/" class="formContainer">
     <input type="text" name="email" placeholder="e-mail">
     <input type="password" name="password" placeholder="contraseña">
     <input type="submit" value="Entrar">
 
 </form>
-<a href="/signup">
+<a class="buttonCenter" href="/signup">
     <button>
         Registrarme
     </button>

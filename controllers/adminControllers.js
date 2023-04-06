@@ -56,6 +56,7 @@ const uploadEntry = async (req, res) => {
                 
                 const peticion = await consulta('entries/', 'post', body)
                 const peticionJson = await peticion.json()
+                
                 if (peticionJson.ok) {
                     res.render('admin/info', {
                         title:'Entrada creada',
@@ -194,7 +195,8 @@ const editEntry = async (req, res) => {
 
 const updateEntry = async (req, res) => {
     console.log('paso?')
-    const { title, oldTitle, extract, content, entryImage, category } = req.body
+    const { title, oldTitle, extract, content, entryImage, category , idEntry} = req.body
+    console.log(req.body)
     const { email } = req.cookies
     const body = {email, ...req.body}
     if (!extract || !title || !content || !entryImage || !category) {
@@ -213,8 +215,9 @@ const updateEntry = async (req, res) => {
 
             if (sameEntries.length == 0) { //validación para no repetir entrada
 
-                const peticion = await consulta(`entries/${oldTitle}`, 'put', body)
+                const peticion = await consulta(`entries/editId/${idEntry}`, 'put', body)
                 const peticionJson = await peticion.json()
+                console.log(peticionJson,'aqui')
                 if (peticionJson.ok) {
                     res.render('admin/info', {
                         title:'Entrada actualizada',
@@ -222,6 +225,7 @@ const updateEntry = async (req, res) => {
                     })
                 
                 } else {
+                    console.log('paso')
                     res.render('post', {
                         title: 'error',
                         msg: 'Error al conectar con la base de datos'
