@@ -33,7 +33,8 @@ const checkLogin = async (req, res) => {
         try {
             const peticion = await consulta(`aut/?email=${email}`, 'get')
             const peticionJson = await peticion.json()
-            console.log(peticionJson.data[0].isadmin, 'admin?')
+            //peticionJson.data[0].isadmin
+            console.log(peticionJson,'pass')
 
             if (!peticionJson.ok) {
                 res.render('index', {
@@ -41,7 +42,8 @@ const checkLogin = async (req, res) => {
                     msg: 'No hemos encontrado el usuario'
                 })
             } else {
-
+               let passwordOk = bcrypt.compareSync(password, peticionJson.data[0].password)
+               if (passwordOk) {
                 if (peticionJson.data[0].isadmin) {
                     const token = await generarJwt(peticionJson.data[0].id_author, peticionJson.data[0].name)
                     const token2 = await generarJwtAdmin(peticionJson.data[0].id_author, peticionJson.data[0].name)
@@ -58,6 +60,13 @@ const checkLogin = async (req, res) => {
                     res.cookie('email', `${email}`)
                     res.redirect('/entries')
                 }
+               } else {
+                res.render('index', {
+                    title: 'Login fallido',
+                    msg: 'Contraseña incorrecta'
+                })
+               }
+                
 
             }
         } catch (error) {
@@ -90,13 +99,13 @@ const signup = async (req, res) => {
 
 const uploadSignup = async (req, res) => {
     const { name, surname, email, password, image } = req.body
-    let peticionUser1,peticionUserJson1
-    if (!name || !surname || !email || !password || !image ) {
+    let peticionUser1, peticionUserJson1
+    if (!name || !surname || !email || !password || !image) {
         res.render('error', {
             title: 'error de validación',
             msg: 'Rellena bien todos los campos'
         })
-    } else if(password.length < 4) {
+    } else if (password.length < 4) {
         res.render('error', {
             title: 'error de validación',
             msg: 'La contraseña debe tener 4 o más caracteres'
@@ -117,24 +126,27 @@ const uploadSignup = async (req, res) => {
                     title: 'error de validación',
                     msg: 'Ya hay un usuario con ese email'
                 })
-            }
-
-            const peticion = await consulta(`aut/`, 'post', body)
-            const peticionJson = await peticion.json()
-
-            if (peticionJson.ok) {
-                const peticionUser = await consulta(`aut/?email=${email}`, 'get')
-                const peticionUserJson = await peticionUser.json()
-                const token = await generarJwt(peticionUserJson.data[0].id_author, peticionUserJson.data[0].name)
-                res.cookie('xtoken', token)
-                res.cookie('email', `${email}`)
-                res.redirect('/entries')
-
             } else {
-                res.render('error', {
-                    title: 'error de registro',
-                    msg: error
-                })
+                let salt = bcrypt.genSaltSync(10);
+                body.password = bcrypt.hashSync(body.password, salt)
+
+                const peticion = await consulta(`aut/`, 'post', body)
+                const peticionJson = await peticion.json()
+
+                if (peticionJson.ok) {
+                    const peticionUser = await consulta(`aut/?email=${email}`, 'get')
+                    const peticionUserJson = await peticionUser.json()
+                    const token = await generarJwt(peticionUserJson.data[0].id_author, peticionUserJson.data[0].name)
+                    res.cookie('xtoken', token)
+                    res.cookie('email', `${email}`)
+                    res.redirect('/entries')
+
+                } else {
+                    res.render('error', {
+                        title: 'error de registro',
+                        msg: error
+                    })
+                }
             }
 
 

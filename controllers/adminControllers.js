@@ -41,7 +41,7 @@ const uploadEntry = async (req, res) => {
 
 
     if (!extract || !title || !content || !entryImage || !category) {
-        res.render('post', {
+        res.render('admin/post', {
             title: 'error de validación',
             msg: 'Rellena bien todos los campos'
         })
