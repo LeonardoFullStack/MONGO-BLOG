@@ -171,7 +171,7 @@ const getSearch = async (req, res) => {
 }
 
 const editEntry = async (req, res) => {
-    const entry = req.params.indexEntry
+    const entry = req.params.id
     let { email } = req.cookies
 
     try {
@@ -195,10 +195,11 @@ const editEntry = async (req, res) => {
 
 const updateEntry = async (req, res) => {
     console.log('paso?')
-    const { title, oldTitle, extract, content, entryImage, category , idEntry} = req.body
+    const { title, extract, content, entryImage, category , idEntry} = req.body
     console.log(req.body)
     const { email } = req.cookies
-    const body = {email, ...req.body}
+    const body = { email, ...req.body}
+    console.log(idEntry,'entry')
     if (!extract || !title || !content || !entryImage || !category) {
         res.render('error', {
             title: 'error de validación',
@@ -214,7 +215,7 @@ const updateEntry = async (req, res) => {
             const sameEntries = entriesJson.data.filter((item) => item.title == title)
 
             if (sameEntries.length == 0) { //validación para no repetir entrada
-
+                console.log('akiaki')
                 const peticion = await consulta(`entries/editId/${idEntry}`, 'put', body)
                 const peticionJson = await peticion.json()
                 console.log(peticionJson,'aqui')

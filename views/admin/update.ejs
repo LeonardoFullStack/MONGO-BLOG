@@ -6,23 +6,24 @@
 <p>
     <%= msg %>
 </p>
-<%= data.title %>
-<form method="post" action="/admin/edit">
-    <input type="text" name="title" placeholder="título" value="<%= data.title %>">
-    <input type="hidden" name="idEntry" value="<%= data.id_entry %>">
-    <input type="hidden" name="oldTitle" placeholder="título" value="<%= data.title %>">
-    <input type="text" name="extract" placeholder="Estracto" value="<%= data.extract %>">
-    <input type="text" name="content" placeholder="Contenido" value="<%= data.content %>">
-    <img class="miniImg" src="<%= data.entryimage %>">
+
+<form method="post" action="/admin/edit/" class="updateForm">
+    <h2>Título</h2><input type="text" name="title" placeholder="título" value="<%= data.title %>">
+    <input type="hidden" name="idEntry" placeholder="título" value="<%= data.id_entry %>">
+    <h2>Estracto</h2> <input type="text" name="extract" placeholder="Estracto" value="<%= data.extract %>">
+    <h2>Contenido</h2> <input type="text" name="content" placeholder="Contenido" value="<%= data.content %>">
+    <h2>Imagen</h2> <img src="<%= data.entryimage %>" class="entryImage">
     <input type="text" name="entryImage" placeholder="Imagen" value="<%= data.entryimage %>">
-    <input type="text" name="category" placeholder="Categoría" value="<%= data.category %>">
-    <input type="submit" value="Publicar">
+    <h2>Categoría</h2><input type="text" name="category" placeholder="Categoría" value="<%= data.category %>">
+    <input type="submit" value="Publicar" class="button">
 
 </form>
+<div class="updateForm">
 <a href="/admin/delete/<%= data.id_entry %>">
     <button>
         Eliminar
     </button>
 </a>
+</div>
 </main>
 <%- include('partials/footer.ejs') %>
