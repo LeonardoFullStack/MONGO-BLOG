@@ -8,7 +8,7 @@ Bienvenido a la documentación del front-end de la tarea blog de Leonardo.
 
 Antes de comenzar, debes tener tanto el back como el front abierto en el visual, el front irá por el puerto 4000 y el back en 3000.
 
-Para tener datos de prueba (algunas cuentas y entradas), debes crear una base de datos en Postgre llamada "blog". Después, abrir el archivo queries.sql del back-end (repositorio APISQLBLOG) e insertar los datos que hay en ella. Crear las dos tablas, entries y authors, y luego insertar los primeros datos de prueba, tanto en authors como en entries. Debes tener en cuenta que todas las contraseñas son 1234, y la usuario ana (ana@correo.es) es administradora.
+La bbdd está en la nube con elephant, no es necesario crear una local para hacer pruebas.
 
 **FUNCIONALIDADES:**
 
