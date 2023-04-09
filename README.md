@@ -12,7 +12,7 @@ Para tener datos de prueba (algunas cuentas y entradas), debes crear una base de
 
 **FUNCIONALIDADES:**
 
-Es un servicio de entradas de blogs en comunidad, donde el usuario puede ver todas las entradas, y editar las suyas. Al hacer login, se muestra en index las últimas entradas publicadas, donde el usuario puede hacer clic en "ver más" y acceder al contenido. También puede acceder a "mis entradas", donde aparecerán sus entradas publicadas, y un botón para poder editarlas. Solo el administrador puede eliminar entradas.
+Es un servicio de entradas de blogs en comunidad, donde el usuario puede ver todas las entradas,crear y editar las suyas. Al hacer login, se muestra en index las últimas entradas publicadas, donde el usuario puede hacer clic en "ver más" y acceder al contenido. También puede acceder a "mis entradas", donde aparecerán sus entradas publicadas, y un botón para poder editarlas. Solo el administrador puede eliminar entradas.
 
 **ADMINISTRADOR:**
 

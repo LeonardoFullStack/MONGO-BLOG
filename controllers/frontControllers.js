@@ -69,6 +69,7 @@ const uploadEntry = async (req, res) => {
                     })
                 }
             } else {
+               
                 res.render('post', {
                     title: 'error',
                     msg: 'Ya tienes una entrada con ese título!'
@@ -130,7 +131,7 @@ const getSearch = async (req, res) => {
         try {
             const peticion = await consulta('entries/', 'get')
             const peticionJson = await peticion.json()
-            console.log(peticionJson, search)
+            
             if (peticionJson.ok) {
                 let pattern = new RegExp(search, 'i')
 
@@ -175,7 +176,7 @@ const editEntry = async (req, res) => {
     try {
         const allMyEntries = await consulta(`entries/one/${entry}`, 'get')
         const entriesJson = await allMyEntries.json()
-        console.log(entriesJson)
+        
         res.render('update', {
             title: 'Modificar  entrada',
             msg: 'Modifica aquí la entrada',
@@ -225,6 +226,7 @@ const updateEntry = async (req, res) => {
                     })
                 }
             } else {
+               
                 res.render('post', {
                     title: 'error',
                     msg: 'Ya tienes una entrada con ese título!'

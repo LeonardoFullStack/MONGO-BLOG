@@ -34,7 +34,7 @@ const checkLogin = async (req, res) => {
             const peticion = await consulta(`aut/?email=${email}`, 'get')
             const peticionJson = await peticion.json()
             //peticionJson.data[0].isadmin
-            console.log(peticionJson,'pass')
+            
 
             if (!peticionJson.ok) {
                 res.render('index', {

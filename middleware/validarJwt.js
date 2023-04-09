@@ -38,9 +38,9 @@ const validarJwt = (req, res, next) => {
 
 const validarJwtAdmin = (req, res, next) => {
     
-       console.log('pasi')
+       
     const zToken = req.cookies['ztoken'];
-     console.log(zToken,'no pasi')
+     
         
 
         if (!zToken) {
@@ -56,17 +56,17 @@ const validarJwtAdmin = (req, res, next) => {
             
             req.header.id = payload.uid
             req.header.name = payload.name
-            console.log('payload')
+            
             
 
         } catch (error) {
-            console.log('erri')
+            
             return res.render('error', {
                 title: 'No has iniciado sesión',
                 msg: 'Inicia sesión para continuar'
             })
         }
-        console.log('next')
+        
         next()
 
 

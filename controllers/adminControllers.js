@@ -6,7 +6,7 @@ const { consulta } = require('../helpers/dbConnect')
 
 
 const adminIndex =async (req,res)  => {
-console.log('check')
+
     try {
         const peticion = await consulta('entries/')
         const peticionJson = await peticion.json()
@@ -17,7 +17,7 @@ console.log('check')
             data: peticionJson.data
         })
     } catch (error) {
-        res.render('error', {
+        res.render('admin/error', {
             title: 'Error de conexión',
             msg: 'Contacta con el administrador'
         })
@@ -63,13 +63,14 @@ const uploadEntry = async (req, res) => {
                         msg:'Entrada creada con éxito!'
                     })
                 } else {
-                    res.render('post', {
+                    res.render('admin/post', {
                         title: 'error',
                         msg: 'Error al conectar con la base de datos'
                     })
                 }
             } else {
-                res.render('post', {
+                
+                res.render('admin/post', {
                     title: 'error',
                     msg: 'Ya tienes una entrada con ese título!'
                 })
@@ -77,7 +78,7 @@ const uploadEntry = async (req, res) => {
 
 
         } catch (error) {
-            res.render('error', {
+            res.render('admin/error', {
                 title: 'error',
                 msg: 'Contacta con el administrador'
             })
@@ -98,13 +99,13 @@ const myEntries = async (req, res) => {
                 data: peticionJson.data
             })
         } else {
-            res.render('error', {
+            res.render('admin/error', {
                 title: 'error',
                 msg: 'Error al obtener tus entradas'
             })
         }
     } catch (error) {
-        res.render('error', {
+        res.render('admin/error', {
             title: 'error',
             msg: 'Error de conexión'
         })
@@ -130,7 +131,7 @@ const getSearch = async (req, res) => {
         try {
             const peticion = await consulta('entries/', 'get')
             const peticionJson = await peticion.json()
-            console.log(peticionJson, search)
+           
             if (peticionJson.ok) {
                 let pattern = new RegExp(search, 'i')
 
@@ -144,7 +145,7 @@ const getSearch = async (req, res) => {
                         query: false
                     })
                 } else {
-                    console.log('paso')
+                    
                     res.render('admin/searchAdmin', {
                         title: `Resultados de ${search}`,
                         msg: `Se han encontrado ${finded.length} resultados`,
@@ -156,7 +157,7 @@ const getSearch = async (req, res) => {
 
             }
         } catch (error) {
-            res.render('error', {
+            res.render('admin/error', {
                 title: 'error',
                 msg: error
             })
@@ -177,14 +178,14 @@ const editEntry = async (req, res) => {
     try {
         const allMyEntries = await consulta(`entries/one/${entry}`, 'get')
         const entriesJson = await allMyEntries.json()
-        console.log(entriesJson)
+       
         res.render('admin/update', {
             title: 'Modificar la entrada',
             msg: 'Modifica aquí la entrada',
             data: entriesJson.data[0]
         })
     } catch (error) {
-        res.render('error', {
+        res.render('admin/error', {
             title: 'error',
             msg: error
         })
@@ -194,14 +195,14 @@ const editEntry = async (req, res) => {
 }
 
 const updateEntry = async (req, res) => {
-    console.log('paso?')
+   
     const { title, extract, content, entryImage, category , idEntry} = req.body
-    console.log(req.body)
+    
     const { email } = req.cookies
     const body = { email, ...req.body}
-    console.log(idEntry,'entry')
+    
     if (!extract || !title || !content || !entryImage || !category) {
-        res.render('error', {
+        res.render('admin/error', {
             title: 'error de validación',
             msg: 'Rellena bien todos los campos'
         })
@@ -215,10 +216,10 @@ const updateEntry = async (req, res) => {
             const sameEntries = entriesJson.data.filter((item) => item.title == title)
 
             if (sameEntries.length == 0) { //validación para no repetir entrada
-                console.log('akiaki')
+                
                 const peticion = await consulta(`entries/editId/${idEntry}`, 'put', body)
                 const peticionJson = await peticion.json()
-                console.log(peticionJson,'aqui')
+                
                 if (peticionJson.ok) {
                     res.render('admin/info', {
                         title:'Entrada actualizada',
@@ -226,14 +227,15 @@ const updateEntry = async (req, res) => {
                     })
                 
                 } else {
-                    console.log('paso')
+                    
                     res.render('post', {
                         title: 'error',
                         msg: 'Error al conectar con la base de datos'
                     })
                 }
             } else {
-                res.render('post', {
+                
+                res.render('admin/post', {
                     title: 'error',
                     msg: 'Ya tienes una entrada con ese título!'
                 })
