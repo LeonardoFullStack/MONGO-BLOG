@@ -1,5 +1,10 @@
 <%- include('partials/header.ejs') %>
 <main>
+
+    <form action="/search" method="post" class="search">
+        <input type="text" name="search">
+        <input type="submit" value="Buscar">
+    </form>
 <h1>
     <%= title %>
 </h1>
@@ -7,22 +12,18 @@
     <%= msg %>
 </p>
     
-    <form action="/search" method="post" class="search">
-        <input type="text" name="search">
-        <input type="submit" value="Buscar">
-    </form>
+    
 <% data.forEach(element => { %>
     <div class="container">
         <div class="gridTitle">
             <%= element.title %>
         </div>
-        <div class="gridDate">
-            <%= element.date %>
-        </div>
-        <div class="gridContent">
-            <%= element.extract %>
-        </div>
+        
+        
         <div class="gridImage">
+            <div class="gridContent">
+                <%= element.extract %>
+            </div>
             <img class="entryImage" src="<%= element.entryimage %>">
         </div>
         <div class="gridEdit">
@@ -34,7 +35,7 @@
         </a>
         </div>
         <div class="gridName">
-            <%= element.surname %>
+            <%= element.surname %> , <%= element.date %>
         </div>
           
     </div> 

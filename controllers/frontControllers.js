@@ -250,7 +250,7 @@ const viewOne = async (req,res) => {
         const peticionJson = await peticion.json()
        
         if (peticionJson.ok) {
-            
+            console.log(peticionJson)
             res.render('one', {
                 title: `Entrada: ${peticionJson.data[0].title}`,
                 msg: 'La entrada al completo',
