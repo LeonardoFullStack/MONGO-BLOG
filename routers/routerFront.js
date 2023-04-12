@@ -11,18 +11,19 @@ router.get('/', getIndex)
 router.get('/signup', signup)
 router.post('/signup', uploadSignup)
 router.post('/log', checkLogin)
+router.get('/search', getSearch)
+router.post('/search', getSearch)
+router.get('/entries', showEntries)
+router.get('/viewOne/:id', viewOne)
 
 //rutas protegidas
-router.get('/entries',validarJwt, showEntries)
 router.get('/myEntries/',validarJwt, myEntries)
-router.get('/search',validarJwt, getSearch)
-router.post('/search',validarJwt, getSearch)
 router.get('/post',validarJwt, postEntry)
 router.post('/post',validarJwt, uploadEntry)
 router.get('/edit/:indexEntry',validarJwt, editEntry)
 router.post('/edit/',validarJwt, updateEntry)
 router.get('/logout',validarJwt, logOut)
-router.get('/viewOne/:id',validarJwt, viewOne)
+
 
 
 module.exports = router

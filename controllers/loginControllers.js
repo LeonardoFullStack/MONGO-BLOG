@@ -46,13 +46,13 @@ const checkLogin = async (req, res) => {
                if (passwordOk) {
                 if (peticionJson.data[0].isadmin) {
                     const token = await generarJwt(peticionJson.data[0].id_author, peticionJson.data[0].name)
+                    res.locals.isLogged = true;
                     const token2 = await generarJwtAdmin(peticionJson.data[0].id_author, peticionJson.data[0].name)
                     res.cookie('xtoken', token)
                     res.cookie('ztoken', token2)
                     res.cookie('email', `${email}`)
                     res.redirect('/admin/')
                 } else {
-
 
 
                     const token = await generarJwt(peticionJson.data[0].id_author, peticionJson.data[0].name)

@@ -12,15 +12,6 @@
 </head>
 <body>
     <header>
-        <img src="../media/newlogo.png" class="logo">
-<!-- Primero miramos si isLogged está definido -->
-<% if (typeof isLogged !== 'undefined' && isLogged) { %>
-    <%- include('nav.ejs') %>
-  <% } else { %>
-    <%- include('navUnlogged.ejs') %>
-  <% } %>
-  
+        <!-- <img src="media/newlogo.png" class="logo"> -->
+        <%- include('navUnlogged.ejs') %>
     </header>
-    
-    
-    

@@ -2,9 +2,10 @@ const express = require('express')
 const app = express();
 const cookieParser = require('cookie-parser')
 const { consulta } = require('../helpers/dbConnect')
+const {ifLogged} = require('../helpers/isLogged')
 
 const showEntries = async (req, res) => {
-
+    const isLogged = ifLogged(req)
 
     try {
         const peticion = await consulta('entries/')
@@ -13,7 +14,8 @@ const showEntries = async (req, res) => {
         res.render('entries', {
             title: 'Últimas entradas',
             msg: 'Consulta aqui todas las entradas',
-            data: peticionJson.data
+            data: peticionJson.data,
+            isLogged
         })
     } catch (error) {
         res.render('error', {
@@ -27,14 +29,16 @@ const showEntries = async (req, res) => {
 }
 
 const postEntry = async (req, res) => {
-
+    const isLogged = ifLogged(req)
     res.render('post', {
         title: 'Escribe una entrada',
-        msg: 'Rellena los campos'
+        msg: 'Rellena los campos',
+        isLogged
     })
 }
 
 const uploadEntry = async (req, res) => {
+    const isLogged = ifLogged(req)
     let { email } = req.cookies
 
     const { title, extract, content, entryImage, category } = req.body
@@ -44,7 +48,8 @@ const uploadEntry = async (req, res) => {
     if (!extract || !title || !content || !entryImage || !category) {
         res.render('post', {
             title: 'error de validación',
-            msg: 'Rellena bien todos los campos'
+            msg: 'Rellena bien todos los campos',
+            isLogged
         })
     } else {
 
@@ -60,19 +65,22 @@ const uploadEntry = async (req, res) => {
                 if (peticionJson.ok) {
                     res.render('info', {
                         title:'Entrada creada',
-                        msg:'Entrada creada con éxito!'
+                        msg:'Entrada creada con éxito!',
+                        isLogged
                     })
                 } else {
                     res.render('post', {
                         title: 'error',
-                        msg: 'Error al conectar con la base de datos'
+                        msg: 'Error al conectar con la base de datos',
+                        isLogged
                     })
                 }
             } else {
                
                 res.render('post', {
                     title: 'error',
-                    msg: 'Ya tienes una entrada con ese título!'
+                    msg: 'Ya tienes una entrada con ese título!',
+                    isLogged
                 })
             }
 
@@ -80,7 +88,8 @@ const uploadEntry = async (req, res) => {
         } catch (error) {
             res.render('error', {
                 title: 'error',
-                msg: 'Contacta con el administrador'
+                msg: 'Contacta con el administrador',
+                isLogged
             })
         }
     }
@@ -88,6 +97,7 @@ const uploadEntry = async (req, res) => {
 }
 
 const myEntries = async (req, res) => {
+    const isLogged = ifLogged(req)
     let { email } = req.cookies
     try {
         const peticion = await consulta(`entries/?email=${email}`, 'get')
@@ -96,36 +106,42 @@ const myEntries = async (req, res) => {
             res.render('myEntries', {
                 title: 'Todas tus entradas',
                 msg: 'Consulta, edita o elimina tus entradas',
-                data: peticionJson.data
+                data: peticionJson.data,
+                isLogged
             })
         } else {
             res.render('error', {
                 title: 'error',
-                msg: 'Error al obtener tus entradas'
+                msg: 'Error al obtener tus entradas',
+                isLogged
             })
         }
     } catch (error) {
         res.render('error', {
             title: 'error',
-            msg: 'Error de conexión'
+            msg: 'Error de conexión',
+            isLogged
         })
     }
 
 }
 
 const getSearch = async (req, res) => {
+    const isLogged = ifLogged(req)
     const { search } = req.body
     if (search == '') {
         res.render('search', {
             title: 'Búsqueda de entradas',
             msg: 'El campo búsqueda está vacío',
-            query: false
+            query: false,
+            isLogged
         })
     } else if (!search) {
         res.render('search', {
             title: 'Búsqueda de entradas',
             msg: 'Realiza aquí tu búsqueda',
-            query: false
+            query: false,
+            isLogged
         })
     } else {
         try {
@@ -141,14 +157,16 @@ const getSearch = async (req, res) => {
                     res.render('search', {
                         title: 'No hay resultados',
                         msg: 'No se han encontrado resultados con tu búsqueda',
-                        query: false
+                        query: false,
+                        isLogged
                     })
                 } else {
                     res.render('search', {
                         title: `Resultados de ${search}`,
                         msg: `Se han encontrado ${finded.length} resultados`,
                         query: true,
-                        data: finded
+                        data: finded,
+                        isLogged
                     })
                 }
 
@@ -157,7 +175,8 @@ const getSearch = async (req, res) => {
         } catch (error) {
             res.render('error', {
                 title: 'error',
-                msg: error
+                msg: error,
+                isLogged
             })
         }
 
@@ -170,6 +189,7 @@ const getSearch = async (req, res) => {
 }
 
 const editEntry = async (req, res) => {
+    const isLogged = ifLogged(req)
     const entry = req.params.indexEntry
     let { email } = req.cookies
 
@@ -180,12 +200,14 @@ const editEntry = async (req, res) => {
         res.render('update', {
             title: 'Modificar  entrada',
             msg: 'Modifica aquí la entrada',
-            data: entriesJson.data[0]
+            data: entriesJson.data[0],
+            isLogged
         })
     } catch (error) {
         res.render('error', {
             title: 'error',
-            msg: error
+            msg: error,
+            isLogged
         })
     }
 
@@ -193,13 +215,15 @@ const editEntry = async (req, res) => {
 }
 
 const updateEntry = async (req, res) => {
+    const isLogged = ifLogged(req)
     const { title, oldTitle, extract, content, entryImage, category } = req.body
     const { email } = req.cookies
     const body = {email, ...req.body}
     if (!extract || !title || !content || !entryImage || !category) {
         res.render('error', {
             title: 'error de validación',
-            msg: 'Rellena bien todos los campos'
+            msg: 'Rellena bien todos los campos',
+            isLogged
         })
 
 
@@ -217,19 +241,22 @@ const updateEntry = async (req, res) => {
                 if (peticionJson.ok) {
                     res.render('info', {
                         title:'Entrada actualizada',
-                        msg:'Entrada actualizada con éxito!'
+                        msg:'Entrada actualizada con éxito!',
+                        isLogged
                     })
                 } else {
                     res.render('post', {
                         title: 'error',
-                        msg: 'Error al conectar con la base de datos'
+                        msg: 'Error al conectar con la base de datos',
+                        isLogged
                     })
                 }
             } else {
                
                 res.render('post', {
                     title: 'error',
-                    msg: 'Ya tienes una entrada con ese título!'
+                    msg: 'Ya tienes una entrada con ese título!',
+                    isLogged
                 })
             }
 
@@ -237,13 +264,15 @@ const updateEntry = async (req, res) => {
         } catch (error) {
             res.render('error', {
                 title: 'error',
-                msg: 'Contacta con el administrador'
+                msg: 'Contacta con el administrador',
+                isLogged
             })
         }
     }
 }
 
 const viewOne = async (req,res) => {
+    const isLogged = ifLogged(req)
     const id = req.params.id
     try {
         const peticion = await consulta(`entries/one/${id}`, 'get')
@@ -254,19 +283,22 @@ const viewOne = async (req,res) => {
             res.render('one', {
                 title: `Entrada: ${peticionJson.data[0].title}`,
                 msg: 'La entrada al completo',
-                data:peticionJson.data[0]
+                data:peticionJson.data[0],
+                isLogged
             })
         } else {
             res.render('error', {
                 title: 'No existe  la entrada',
-                msg: 'No se ha encontrado la entrada'
+                msg: 'No se ha encontrado la entrada',
+                isLogged
             })
         }
     } catch (error) {
         res.render('error', {
             title: 'error',
             msg: 'Contacta con el administrador',
-            error
+            error,
+            isLogged
         })
     }
 }
