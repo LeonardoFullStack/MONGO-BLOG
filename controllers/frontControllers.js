@@ -6,10 +6,12 @@ const {ifLogged} = require('../helpers/isLogged')
 
 const showEntries = async (req, res) => {
     const isLogged = ifLogged(req)
+    
 
     try {
         const peticion = await consulta('entries/')
         const peticionJson = await peticion.json()
+        
 
         res.render('entries', {
             title: 'Últimas entradas',
@@ -40,12 +42,14 @@ const postEntry = async (req, res) => {
 const uploadEntry = async (req, res) => {
     const isLogged = ifLogged(req)
     let { email } = req.cookies
+    
+    const { title, extract, content,  category } = req.body
+    const entryImage = `../media/uploads/${req.file.filename}`
+    console.log(entryImage)
+    const body = { email,entryImage, ...req.body }
 
-    const { title, extract, content, entryImage, category } = req.body
-    const body = { email, ...req.body }
 
-
-    if (!extract || !title || !content || !entryImage || !category) {
+    if (!extract || !title || !content  || !category) {
         res.render('post', {
             title: 'error de validación',
             msg: 'Rellena bien todos los campos',
@@ -216,10 +220,11 @@ const editEntry = async (req, res) => {
 
 const updateEntry = async (req, res) => {
     const isLogged = ifLogged(req)
-    const { title, oldTitle, extract, content, entryImage, category } = req.body
+    let { title, oldTitle, extract, content, entryImage, category, oldImage } = req.body
     const { email } = req.cookies
-    const body = {email, ...req.body}
-    if (!extract || !title || !content || !entryImage || !category) {
+    console.log(!entryImage)
+
+    if (!extract || !title || !content || !category) {
         res.render('error', {
             title: 'error de validación',
             msg: 'Rellena bien todos los campos',
@@ -228,16 +233,24 @@ const updateEntry = async (req, res) => {
 
 
         
-    } else {
+    } else if (!entryImage) {
+        entryImage = oldImage
+        console.log(email)
+    }
+
+    const body = {email, title,  extract, content, entryImage, category,}
+    //falta poner el middleware del multer
+    //no llega el entryimage
         try {
             const allMyEntries = await consulta(`entries/?email=${email}`, 'get')
             const entriesJson = await allMyEntries.json()
             const sameEntries = entriesJson.data.filter((item) => item.title == title)
-
-            if (sameEntries.length == 0) { //validación para no repetir entrada
+            
+            if (sameEntries.length == 0) { //no hace falta esta validación, es un update xD
 
                 const peticion = await consulta(`entries/${oldTitle}`, 'put', body)
                 const peticionJson = await peticion.json()
+                console.log('entrada2')
                 if (peticionJson.ok) {
                     res.render('info', {
                         title:'Entrada actualizada',
@@ -268,7 +281,7 @@ const updateEntry = async (req, res) => {
                 isLogged
             })
         }
-    }
+    
 }
 
 const viewOne = async (req,res) => {

@@ -6,13 +6,13 @@
 <p>
     <%= msg %>
 </p>
-<form method="post" action="/post" class="updateForm">
-    <input type="text" name="title" placeholder="título">
+<form method="post" action="/post" class="updateForm" enctype="multipart/form-data">
+     <input type="text" name="title" placeholder="título">
     <input type="text" name="extract" placeholder="Estracto">
-    <textarea name="content" placeholder="Contenido"></textarea>
-    <input type="text" name="entryImage" placeholder="Imagen">
-    <input type="text" name="category" placeholder="Categoría">
-    <input type="submit" value="Publicar">
+    <textarea name="content" placeholder="Contenido"></textarea> 
+    <input type="file" name="entryImage">
+     <input type="text" name="category" placeholder="Categoría"> 
+     <input type="submit" value="Publicar">
 
 </form>
 </main>
