@@ -10,13 +10,25 @@ Antes de comenzar, debes tener tanto el back como el front abierto en el visual,
 
 La bbdd está en la nube con elephant, no es necesario crear una local para hacer pruebas.
 
-**INICIAR**
+**INICIAR**  
+
 Para iniciar el proyecto, se debe clonar los dos repositorios "APISQLBLOG"  y "FRONTSQLBLOG" .
-Ingresamos "npm i" para instalar los npm del proyecto
+Ingresamos "npm i" para instalar los npm del proyecto  
+Luego, agregamos estos valores al template.env del front:  
+PORT=4000  
+JWT_SECRET_KEY=elcieloestaentabicubiladoquienlodesentabicubilara
+JWT_SECRET_KEY2=eldesentabicubiladorquelodesentabicubilebuendesentabicubiladorsera  
+Y lo mismo pero en el back:  
+PORT=3000
+JWT_SECRET_KEY=elcieloestaentabicubiladoquienlodesentabicubilara
+JWT_SECRET_KEY2=eldesentabicubiladorquelodesentabicubilebuendesentabicubiladorsera  
+ y le quitamos la palabra template
+ 
 Abriendo dos terminales en los directorios de los repositorios, ingresamos "npm run dev" en cada uno.
 Listo, ya podemos navegar en el proyecto por la ruta "http://localhost:4000"
 
-**CUENTAS**
+**CUENTAS**  
+
 Podéis haccer pruebas con las cuentas:
 admin: ana@correo.es | password: 1234
 user: maria@correo.es | password: 1234
