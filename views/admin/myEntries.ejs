@@ -13,29 +13,33 @@
         <div class="gridTitle">
             <%= element.title %>
         </div>
-        <div class="gridDate">
-            <%= element.date %>
-        </div>
-        <div class="gridContent">
-            <%= element.extract %>
-        </div>
+        
+        
         <div class="gridImage">
-            <img class="entryImage" src="<%= element.entryimage %>">
+            <div class="gridContent">
+                <%= element.extract %>
+            </div>
+            <img class="entryImage" src="<%= element.entryimage %>" alt="Imagen de la entrada">
         </div>
+
         <div class="gridEdit">
             <a href="edit/<%= element.id_entry %>">
-            <button>
-                editar
-            </button>
-        </a>
-        <a href="viewOne/<%= element.id_entry %>">
-            <button>
-                Leer más
-            </button>
-        </a>
+                <button>
+                    editar
+                </button>
+            </a>
+            <a href="/viewOne/<%= element.id_entry %>">
+                <button>
+                    Leer más
+                </button>
+            </a>
+            
+
         </div>
+
         <div class="gridName">
-            <%= element.surname %>
+            <%= element.surname %> , <%= element.date %>
+
         </div>
           
     </div> 

@@ -3,14 +3,14 @@ const app = express();
 const cookieParser = require('cookie-parser')
 const { consulta } = require('../helpers/dbConnect')
 const bcrypt = require('bcryptjs')
-const { generarJwt, generarJwtAdmin } = require('../helpers/jwt')
+
 
 app.use(cookieParser())
 
 const getIndex = async (req, res) => {
     const { email } = req.cookies
     if (email) {
-        res.redirect('/entries')
+        res.redirect('/entries?pag=1')
     } else {
         res.render('index', {
             title: 'TwitZerg',
@@ -19,6 +19,20 @@ const getIndex = async (req, res) => {
     }
 
 }
+
+/**
+ * Realiza la validación y autenticación de un usuario al realizar el login.
+ * Se añaden tokens en función de su rol y
+ * si es administrador, se le redirige a dicha ruta
+ *
+ * @function
+ * @async
+ * @param {object} req - Objeto de solicitud de Express.
+ * @param {object} res - Objeto de respuesta de Express.
+ * @throws {Error} - Si hay un error de conexión a la base de datos.
+ * @throws {Error} - Si la validación del formulario de login falla.
+
+ */
 
 const checkLogin = async (req, res) => {
     const { email, password } = req.body
@@ -33,7 +47,7 @@ const checkLogin = async (req, res) => {
         try {
             const peticion = await consulta(`aut/?email=${email}`, 'get')
             const peticionJson = await peticion.json()
-            //peticionJson.data[0].isadmin
+            
             
 
             if (!peticionJson.ok) {
@@ -45,32 +59,32 @@ const checkLogin = async (req, res) => {
                let passwordOk = bcrypt.compareSync(password, peticionJson.data[0].password)
                if (passwordOk) {
                 if (peticionJson.data[0].isadmin) {
-                    const token = await generarJwt(peticionJson.data[0].id_author, peticionJson.data[0].name)
-                    const token2 = await generarJwtAdmin(peticionJson.data[0].id_author, peticionJson.data[0].name)
-                    res.cookie('xtoken', token)
-                    res.cookie('ztoken', token2)
+                    
+                    res.locals.isLogged = true;
+                    
+                    res.cookie('xtoken', peticionJson.token)
+                    res.cookie('ztoken', peticionJson.tokenz)
                     res.cookie('email', `${email}`)
-                    res.redirect('/admin/')
+                    res.redirect('/admin/?pag=1')
                 } else {
 
 
-
-                    const token = await generarJwt(peticionJson.data[0].id_author, peticionJson.data[0].name)
-                    res.cookie('xtoken', token)
+                    
+                    res.cookie('xtoken', peticionJson.token)
                     res.cookie('email', `${email}`)
-                    res.redirect('/entries')
+                    res.redirect('/entries?pag=1')
                 }
                } else {
                 res.render('index', {
                     title: 'Login fallido',
-                    msg: 'Contraseña incorrecta'
+                    msg: 'Credenciales incorrectas'
                 })
                }
                 
 
             }
         } catch (error) {
-            console.log(error)
+            
             res.render('error', {
                 title: 'error de conexión',
                 msg: 'Contacta con el administrador'
@@ -80,6 +94,15 @@ const checkLogin = async (req, res) => {
 
 
 }
+
+/**
+ * Cierra la sesión de un usuario y realiza una redirección a la página de inicio de sesión.
+ *
+ * @function
+ * @param {object} req - Objeto de solicitud de Express.
+ * @param {object} res - Objeto de respuesta de Express.
+ * @returns {void}
+ */
 
 const logOut = (req, res) => {
     res.clearCookie('xtoken')
@@ -91,6 +114,16 @@ const logOut = (req, res) => {
     })
 }
 
+/**
+ * Maneja el proceso de registro de un nuevo usuario.
+ *
+ * @function
+ * @async
+ * @param {object} req - Objeto de solicitud de Express.
+ * @param {object} res - Objeto de respuesta de Express.
+ * @returns {Promise<void>}
+ */
+
 const signup = async (req, res) => {
     res.render('signup', {
         title: 'Regístrate',
@@ -98,10 +131,19 @@ const signup = async (req, res) => {
     })
 }
 
+/**
+ * Maneja el proceso de registro de un nuevo usuario.
+ *
+ * @function
+ * @async
+ * @param {object} req - Objeto de solicitud de Express.
+ * @param {object} res - Objeto de respuesta de Express.
+ */
+
 const uploadSignup = async (req, res) => {
-    const { name, surname, email, password, image } = req.body
+    const { name, surname, email, password } = req.body
     let peticionUser1, peticionUserJson1
-    if (!name || !surname || !email || !password || !image) {
+    if (!name || !surname || !email || !password ) {
         res.render('error', {
             title: 'error de validación',
             msg: 'Rellena bien todos los campos'
@@ -133,19 +175,19 @@ const uploadSignup = async (req, res) => {
 
                 const peticion = await consulta(`aut/`, 'post', body)
                 const peticionJson = await peticion.json()
+               
 
                 if (peticionJson.ok) {
-                    const peticionUser = await consulta(`aut/?email=${email}`, 'get')
-                    const peticionUserJson = await peticionUser.json()
-                    const token = await generarJwt(peticionUserJson.data[0].id_author, peticionUserJson.data[0].name)
-                    res.cookie('xtoken', token)
+                    
+                   
+                    res.cookie('xtoken', peticionJson.token)
                     res.cookie('email', `${email}`)
                     res.redirect('/entries')
 
                 } else {
                     res.render('error', {
                         title: 'error de registro',
-                        msg: error
+                        msg: 'error de  registro'
                     })
                 }
             }
@@ -154,7 +196,7 @@ const uploadSignup = async (req, res) => {
         } catch (error) {
             res.render('error', {
                 title: 'error de registro',
-                msg: 'El email no es válido'
+                msg: error
             })
         }
     }

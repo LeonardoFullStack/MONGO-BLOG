@@ -8,27 +8,28 @@
 </p>
 <div class="containerOne">
     <div class="gridTitle">
-        <%= data.title %>
+        <%= data.title %> ,  <%= data.surname %> (<%= data.date %>)  
     </div>
-    <div class="gridDate">
+    <!-- <div class="gridDate">
         <%= data.date %>
-    </div>
+    </div> -->
     <div class="gridContentOne">
-        <p>Contenido:</p>
+        
        <p>  <%= data.content %></p>
     </div>
     <div class="gridImage">
         <img class="entryImage" src="<%= data.entryimage %>">
     </div>
     
-    <div class="gridNameOne">
-        <%= data.surname %>
-    </div>
+
     
         <div class="gridEditOne">
             
             <p>
-                Estracto:<%= data.extract %>
+                Estracto
+            </p>
+            <p>
+                <%= data.extract %>
             </p>
         
         </div>

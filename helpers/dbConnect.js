@@ -2,6 +2,22 @@ const urlBase='http://localhost:3000/api/'
 const express = require('express')
 
 
+/**
+ * Función para realizar una consulta HTTP a una URL específica con un método y cuerpo de solicitud opcional.
+ *
+ * @async
+ * @function
+ * @param {string} url - URL de la consulta HTTP.
+ * @param {string} method - Método HTTP de la consulta (p.ej., 'get', 'post', 'put', 'delete').
+ * @param {Object} [body] - Cuerpo de la solicitud HTTP en formato JSON (solo para 'post' y 'put').
+ * @throws {Error} - Error en caso de fallo en la consulta HTTP.
+ * @returns {Promise} - Promesa que se resuelve con la respuesta de la consulta HTTP.
+ *
+ * @typedef {Object} options - Opciones de configuración para la consulta HTTP.
+ * @property {string} method - Método HTTP de la consulta.
+ * @property {string} [body] - Cuerpo de la solicitud HTTP en formato JSON (solo para 'post' y 'put').
+ * @property {Object} headers - Cabeceras de la solicitud HTTP.
+ */
 const consulta = async(url,method,body) => {
 
     let options={}

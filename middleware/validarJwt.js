@@ -2,7 +2,15 @@ const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
 
 
-
+/**
+ * Middleware para validar un token JWT en una cookie de sesión.
+ *
+ * @function
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @param {function} next - Función de siguiente middleware.
+ * @returns {void}
+ */
 const validarJwt = (req, res, next) => {
     
        
@@ -36,8 +44,18 @@ const validarJwt = (req, res, next) => {
 
 }
 
+
+/**
+ * Middleware para validar un token JWT de administrador en una cookie de sesión.
+ *
+ * @function
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @param {function} next - Función de siguiente middleware.
+ * @returns {void}
+ */
 const validarJwtAdmin = (req, res, next) => {
-    
+   
        
     const zToken = req.cookies['ztoken'];
      
