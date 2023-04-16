@@ -10,6 +10,12 @@ Antes de comenzar, debes tener tanto el back como el front abierto en el visual,
 
 La bbdd está en la nube con elephant, no es necesario crear una local para hacer pruebas.
 
+**INICIAR**
+Para iniciar el proyecto, se debe clonar los dos repositorios "APISQLBLOG"  y "FRONTSQLBLOG" .
+Ingresamos "npm i" para instalar los npm del proyecto
+Abriendo dos terminales en los directorios de los repositorios, ingresamos "npm run dev" en cada uno.
+Listo, ya podemos navegar en el proyecto por la ruta "http://localhost:4000"
+
 **CUENTAS**
 Podéis haccer pruebas con las cuentas:
 admin: ana@correo.es | password: 1234
@@ -23,3 +29,12 @@ Es un servicio de entradas de blogs en comunidad, donde el usuario puede ver tod
 **ADMINISTRADOR:**
 
 Al acceder con una cuenta de administrador, se te redigirá automáticamente a /admin. La interfaz es prácticamente la misma, solo que el administrador tendrá desde el principio (el index), acceso al botón de editar entradas, sin tener que ser suyas. En el panel de control de editar entradas, también podrá eliminarlas, en un botón que pone "eliminar".
+
+**ULTIMAS FUNCIONALIDADES (2.0)**
+Los usuarios no registrados pueden acceder a ver las entradas y a la herramienta de búsqueda.
+Las entradas desde la vista admin se hacen desde una tabla.
+Remaquetación casi entera, con vistas mas agradables para el cliente.
+Expres-validator para comprobar los inputs.
+JWT desde el back ( antes se generaba en el front )
+Paginación casera para la vista de todas las entradas.
+

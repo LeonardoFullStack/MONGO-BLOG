@@ -17,7 +17,6 @@ const express = require('express')
  * @property {string} method - Método HTTP de la consulta.
  * @property {string} [body] - Cuerpo de la solicitud HTTP en formato JSON (solo para 'post' y 'put').
  * @property {Object} headers - Cabeceras de la solicitud HTTP.
- * @property {string} headers['Content-type'] - Tipo de contenido de la solicitud HTTP.
  */
 const consulta = async(url,method,body) => {
 
