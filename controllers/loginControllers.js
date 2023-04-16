@@ -20,6 +20,24 @@ const getIndex = async (req, res) => {
 
 }
 
+/**
+ * Realiza la validación y autenticación de un usuario al realizar el login.
+ * Se añaden tokens en función de su rol y
+ * si es administrador, se le redirige a dicha ruta
+ *
+ * @function
+ * @async
+ * @param {object} req - Objeto de solicitud de Express.
+ * @param {object} res - Objeto de respuesta de Express.
+ * @param {string} req.body.email - Email del usuario.
+ * @param {string} req.body.password - Contraseña del usuario.
+ * @returns {void}
+ * @throws {Error} - Si hay un error de conexión a la base de datos.
+ * @throws {Error} - Si la validación del formulario de login falla.
+ * @param {boolean} isLogged - Indica si el usuario está autenticado o no.
+ * @returns {void}
+ */
+
 const checkLogin = async (req, res) => {
     const { email, password } = req.body
 
@@ -51,14 +69,14 @@ const checkLogin = async (req, res) => {
                     res.cookie('xtoken', peticionJson.token)
                     res.cookie('ztoken', peticionJson.tokenz)
                     res.cookie('email', `${email}`)
-                    res.redirect('/admin/')
+                    res.redirect('/admin/?pag=1')
                 } else {
 
 
                     
                     res.cookie('xtoken', peticionJson.token)
                     res.cookie('email', `${email}`)
-                    res.redirect('/entries')
+                    res.redirect('/entries?pag=1')
                 }
                } else {
                 res.render('index', {
@@ -70,7 +88,7 @@ const checkLogin = async (req, res) => {
 
             }
         } catch (error) {
-            console.log(error)
+            
             res.render('error', {
                 title: 'error de conexión',
                 msg: 'Contacta con el administrador'
@@ -80,6 +98,15 @@ const checkLogin = async (req, res) => {
 
 
 }
+
+/**
+ * Cierra la sesión de un usuario y realiza una redirección a la página de inicio de sesión.
+ *
+ * @function
+ * @param {object} req - Objeto de solicitud de Express.
+ * @param {object} res - Objeto de respuesta de Express.
+ * @returns {void}
+ */
 
 const logOut = (req, res) => {
     res.clearCookie('xtoken')
@@ -91,12 +118,33 @@ const logOut = (req, res) => {
     })
 }
 
+/**
+ * Maneja el proceso de registro de un nuevo usuario.
+ *
+ * @function
+ * @async
+ * @param {object} req - Objeto de solicitud de Express.
+ * @param {object} res - Objeto de respuesta de Express.
+ * @returns {Promise<void>}
+ */
+
 const signup = async (req, res) => {
     res.render('signup', {
         title: 'Regístrate',
         msg: 'Regístrate en nuestra base de datos'
     })
 }
+
+/**
+ * Maneja el proceso de registro de un nuevo usuario.
+ *
+ * @function
+ * @async
+ * @param {object} req - Objeto de solicitud de Express.
+ * @param {object} res - Objeto de respuesta de Express.
+ * @param {Response} peticionUser1 - Busca si  ya existe un usuario con ese email.
+ * @param {Response} peticion - Respuesta de la petición de registro.
+ */
 
 const uploadSignup = async (req, res) => {
     const { name, surname, email, password } = req.body
@@ -133,7 +181,7 @@ const uploadSignup = async (req, res) => {
 
                 const peticion = await consulta(`aut/`, 'post', body)
                 const peticionJson = await peticion.json()
-                console.log(peticionJson)
+               
 
                 if (peticionJson.ok) {
                     

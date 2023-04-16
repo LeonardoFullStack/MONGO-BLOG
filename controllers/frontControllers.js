@@ -5,12 +5,34 @@ const { consulta } = require('../helpers/dbConnect')
 const {ifLogged} = require('../helpers/isLogged')
 const {errorMsgs} = require('../helpers/errorMsg')
 
+
+/**
+ * Muestra las últimas entradas en la página de entradas.
+ * 
+ * @function
+ * @async
+ * @param {object} req - Objeto de solicitud HTTP.
+ * @param {object} res - Objeto de respuesta HTTP.
+ * @param {number} page página a mostrar
+ * @param {object} pageKnew Sirve para saber cuantas páginas habrá.
+ * @param {object} peticion petición para saber las  4 entradas correspondientes.
+ * @returns {void}
+ * @throws {Error} Si hay un error de conexión.
+ */
 const showEntries = async (req, res) => {
     const isLogged = ifLogged(req)
+    const page = req.query.pag
+    
     
 
     try {
-        const peticion = await consulta('entries/')
+        const pageKnew = await consulta('entries/');
+        const pageKnewJson = await pageKnew.json()
+
+        const pages = Math.ceil(pageKnewJson.data.length / 4)
+       
+
+        const peticion = await consulta(`entries?pag=${page}`)
         const peticionJson = await peticion.json()
         
 
@@ -18,7 +40,8 @@ const showEntries = async (req, res) => {
             title: 'Últimas entradas',
             msg: 'Consulta aqui todas las entradas',
             data: peticionJson.data,
-            isLogged
+            isLogged,
+            pages
         })
     } catch (error) {
         res.render('error', {
@@ -41,6 +64,21 @@ const postEntry = async (req, res) => {
     })
 }
 
+
+/**
+ * Maneja la subida de una nueva entrada.
+ * 
+ * @function
+ * @async
+ * @param {object} req - Objeto de solicitud HTTP.
+ * @param {object} res - Objeto de respuesta HTTP.
+ * @param {boolean} isLogged - Indica si el usuario está autenticado.
+ * @param {boolean} errors - Indica si hay errores en la validación de campos.
+ * @param {Array} sameEntries - Array de entradas con el mismo título.
+ * @param {object} allMyEntries - Objeto de todas las entradas del usuario.
+ * @returns {void}
+ * @throws {Error} Si hay un error de conexión.
+ */
 const uploadEntry = async (req, res) => {
 
     const isLogged = ifLogged(req)
@@ -73,7 +111,7 @@ const uploadEntry = async (req, res) => {
                     })
                 }else if(peticionJson.errores) {
                     const errores = errorMsgs(peticionJson.errores)
-                    console.log(body, errores)
+                   
                     res.render('post', {
                         title: 'Campos incorrectos',
                         msg: 'Rellena bien los campos',
@@ -107,6 +145,18 @@ const uploadEntry = async (req, res) => {
 
 }
 
+
+/**
+ * Maneja la obtención de todas las entradas de un usuario.
+ * 
+ * @function
+ * @async
+ * @param {object} req - Objeto de solicitud HTTP.
+ * @param {object} res - Objeto de respuesta HTTP.
+ * @param {boolean} isLogged - Indica si el usuario está autenticado.
+ * @returns {void}
+ * @throws {Error} Si hay un error de conexión.
+ */
 const myEntries = async (req, res) => {
     const isLogged = ifLogged(req)
     let { email } = req.cookies
@@ -137,6 +187,20 @@ const myEntries = async (req, res) => {
 
 }
 
+/**
+ * Maneja la búsqueda de entradas.
+ * 
+ * @function
+ * @async
+ * @param {object} req - Objeto de solicitud HTTP.
+ * @param {object} res - Objeto de respuesta HTTP.
+ * @param {boolean} isLogged - Indica si el usuario está autenticado.
+ * @param {string} search - Término de búsqueda ingresado por el usuario.
+ * @param {RegExp} pattern - Patrón de búsqueda utilizado para filtrar las entradas.
+ * @param {object} finded - Entradas encontradas con la búsqueda.
+ * @returns {void}
+ * @throws {Error} Si hay un error de conexión.
+ */
 const getSearch = async (req, res) => {
     const isLogged = ifLogged(req)
     const { search } = req.body
@@ -199,6 +263,20 @@ const getSearch = async (req, res) => {
 
 }
 
+
+/**
+ * Maneja la edición de una entrada.
+ * 
+ * @function
+ * @async
+ * @param {object} req - Objeto de solicitud HTTP.
+ * @param {object} res - Objeto de respuesta HTTP.
+ * @param {boolean} isLogged - Indicador si el usuario está conectado o no.
+ * @param {string} entry - Índice de la entrada a editar.
+ * @param {string} email - Dirección de correo electrónico del usuario.
+ * @returns {void}
+ * @throws {Error} Si hay un error de conexión.
+ */
 const editEntry = async (req, res) => {
     const isLogged = ifLogged(req)
     const entry = req.params.indexEntry
@@ -225,6 +303,25 @@ const editEntry = async (req, res) => {
 
 }
 
+
+/**
+ * Maneja la actualización de una entrada.
+ * 
+ * @function
+ * @async
+ * @param {object} req - Objeto de solicitud HTTP.
+ * @param {object} res - Objeto de respuesta HTTP.
+ * @param {string} req.body.title - Título de la entrada.
+ * @param {string} req.body.oldTitle - Título antiguo de la entrada.
+ * @param {string} req.body.extract - Extracto de la entrada.
+ * @param {string} req.body.content - Contenido de la entrada.
+ * @param {string} req.body.category - Categoría de la entrada.
+ * @param {string} req.body.oldImage - Ruta de la imagen antigua de la entrada.
+ * @param {string} req.body.email - Correo electrónico del usuario.
+ * @param {string} req.file.filename - Nombre del archivo de la imagen de la entrada.
+ * @returns {void}
+ * @throws {Error} Si hay un error de conexión.
+ */
 const updateEntry = async (req, res) => {
     const isLogged = ifLogged(req)
     let { title, oldTitle, extract, content, category, oldImage } = req.body
@@ -250,7 +347,7 @@ const updateEntry = async (req, res) => {
 
                 const peticion = await consulta(`entries/${oldTitle}`, 'put', body)
                 const peticionJson = await peticion.json()
-                console.log('entrada2')
+              
                 if (peticionJson.ok) {
                     res.render('info', {
                         title:'Entrada actualizada',
@@ -277,6 +374,18 @@ const updateEntry = async (req, res) => {
     
 }
 
+
+/**
+ * Maneja la visualización de una sola entrada.
+ * 
+ * @function
+ * @async
+ * @param {object} req - Objeto de solicitud HTTP.
+ * @param {object} res - Objeto de respuesta HTTP.
+ * @param {string} req.params.id - ID de la entrada a visualizar.
+ * @returns {void}
+ * @throws {Error} Si hay un error de conexión.
+ */
 const viewOne = async (req,res) => {
     const isLogged = ifLogged(req)
     const id = req.params.id
@@ -285,7 +394,7 @@ const viewOne = async (req,res) => {
         const peticionJson = await peticion.json()
        
         if (peticionJson.ok) {
-            console.log(peticionJson)
+            
             res.render('one', {
                 title: `Entrada: ${peticionJson.data[0].title}`,
                 msg: 'La entrada al completo',
