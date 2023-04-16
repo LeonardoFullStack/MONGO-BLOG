@@ -3,6 +3,7 @@ const app = express();
 const cookieParser = require('cookie-parser')
 const { consulta } = require('../helpers/dbConnect')
 const {ifLogged} = require('../helpers/isLogged')
+const {errorMsgs} = require('../helpers/errorMsg')
 
 const showEntries = async (req, res) => {
     const isLogged = ifLogged(req)
@@ -35,56 +36,61 @@ const postEntry = async (req, res) => {
     res.render('post', {
         title: 'Escribe una entrada',
         msg: 'Rellena los campos',
-        isLogged
+        isLogged,
+        errors:false
     })
 }
 
 const uploadEntry = async (req, res) => {
+
     const isLogged = ifLogged(req)
     let { email } = req.cookies
     
     const { title, extract, content,  category } = req.body
-    const entryImage = `../media/uploads/${req.file.filename}`
-    console.log(entryImage)
+    const entryImage = req.file ? `../media/uploads/${req.file.filename}` : 'https://aeroclub-issoire.fr/wp-content/uploads/2020/05/image-not-found.jpg'; 
+    
     const body = { email,entryImage, ...req.body }
 
 
-    if (!extract || !title || !content  || !category) {
-        res.render('post', {
-            title: 'error de validación',
-            msg: 'Rellena bien todos los campos',
-            isLogged
-        })
-    } else {
+    
 
         try {
+            
             const allMyEntries = await consulta(`entries/?email=${email}`, 'get')
             const entriesJson = await allMyEntries.json()
             const sameEntries = entriesJson.data.filter((item) => item.title == title)
-
+           
             if (sameEntries.length == 0) { //validación para no repetir entrada
-
+                
                 const peticion = await consulta('entries/', 'post', body)
                 const peticionJson = await peticion.json()
+                
                 if (peticionJson.ok) {
                     res.render('info', {
                         title:'Entrada creada',
                         msg:'Entrada creada con éxito!',
                         isLogged
                     })
-                } else {
+                }else if(peticionJson.errores) {
+                    const errores = errorMsgs(peticionJson.errores)
+                    console.log(body, errores)
                     res.render('post', {
-                        title: 'error',
-                        msg: 'Error al conectar con la base de datos',
-                        isLogged
+                        title: 'Campos incorrectos',
+                        msg: 'Rellena bien los campos',
+                        data: body,
+                        isLogged,
+                        errors: true,
+                        errores
+                        
                     })
-                }
+                } 
             } else {
                
                 res.render('post', {
                     title: 'error',
                     msg: 'Ya tienes una entrada con ese título!',
-                    isLogged
+                    isLogged,
+                    errors:false
                 })
             }
 
@@ -92,11 +98,12 @@ const uploadEntry = async (req, res) => {
         } catch (error) {
             res.render('error', {
                 title: 'error',
-                msg: 'Contacta con el administrador',
-                isLogged
+                msg: error,
+                isLogged,
+                errors:false
             })
         }
-    }
+    
 
 }
 
@@ -220,9 +227,11 @@ const editEntry = async (req, res) => {
 
 const updateEntry = async (req, res) => {
     const isLogged = ifLogged(req)
-    let { title, oldTitle, extract, content, entryImage, category, oldImage } = req.body
+    let { title, oldTitle, extract, content, category, oldImage } = req.body
     const { email } = req.cookies
-    console.log(!entryImage)
+    const entryImage = req.file ? `../media/uploads/${req.file.filename}` : oldImage; 
+  
+    
 
     if (!extract || !title || !content || !category) {
         res.render('error', {
@@ -232,21 +241,12 @@ const updateEntry = async (req, res) => {
         })
 
 
-        
-    } else if (!entryImage) {
-        entryImage = oldImage
-        console.log(email)
     }
 
     const body = {email, title,  extract, content, entryImage, category,}
-    //falta poner el middleware del multer
-    //no llega el entryimage
+     
         try {
-            const allMyEntries = await consulta(`entries/?email=${email}`, 'get')
-            const entriesJson = await allMyEntries.json()
-            const sameEntries = entriesJson.data.filter((item) => item.title == title)
             
-            if (sameEntries.length == 0) { //no hace falta esta validación, es un update xD
 
                 const peticion = await consulta(`entries/${oldTitle}`, 'put', body)
                 const peticionJson = await peticion.json()
@@ -264,14 +264,7 @@ const updateEntry = async (req, res) => {
                         isLogged
                     })
                 }
-            } else {
-               
-                res.render('post', {
-                    title: 'error',
-                    msg: 'Ya tienes una entrada con ese título!',
-                    isLogged
-                })
-            }
+            
 
 
         } catch (error) {

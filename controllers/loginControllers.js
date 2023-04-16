@@ -3,7 +3,7 @@ const app = express();
 const cookieParser = require('cookie-parser')
 const { consulta } = require('../helpers/dbConnect')
 const bcrypt = require('bcryptjs')
-const { generarJwt, generarJwtAdmin } = require('../helpers/jwt')
+
 
 app.use(cookieParser())
 
@@ -33,7 +33,7 @@ const checkLogin = async (req, res) => {
         try {
             const peticion = await consulta(`aut/?email=${email}`, 'get')
             const peticionJson = await peticion.json()
-            //peticionJson.data[0].isadmin
+            
             
 
             if (!peticionJson.ok) {
@@ -45,25 +45,25 @@ const checkLogin = async (req, res) => {
                let passwordOk = bcrypt.compareSync(password, peticionJson.data[0].password)
                if (passwordOk) {
                 if (peticionJson.data[0].isadmin) {
-                    const token = await generarJwt(peticionJson.data[0].id_author, peticionJson.data[0].name)
+                    
                     res.locals.isLogged = true;
-                    const token2 = await generarJwtAdmin(peticionJson.data[0].id_author, peticionJson.data[0].name)
-                    res.cookie('xtoken', token)
-                    res.cookie('ztoken', token2)
+                    
+                    res.cookie('xtoken', peticionJson.token)
+                    res.cookie('ztoken', peticionJson.tokenz)
                     res.cookie('email', `${email}`)
                     res.redirect('/admin/')
                 } else {
 
 
-                    const token = await generarJwt(peticionJson.data[0].id_author, peticionJson.data[0].name)
-                    res.cookie('xtoken', token)
+                    
+                    res.cookie('xtoken', peticionJson.token)
                     res.cookie('email', `${email}`)
                     res.redirect('/entries')
                 }
                } else {
                 res.render('index', {
                     title: 'Login fallido',
-                    msg: 'Contraseña incorrecta'
+                    msg: 'Credenciales incorrectas'
                 })
                }
                 
@@ -99,9 +99,9 @@ const signup = async (req, res) => {
 }
 
 const uploadSignup = async (req, res) => {
-    const { name, surname, email, password, image } = req.body
+    const { name, surname, email, password } = req.body
     let peticionUser1, peticionUserJson1
-    if (!name || !surname || !email || !password || !image) {
+    if (!name || !surname || !email || !password ) {
         res.render('error', {
             title: 'error de validación',
             msg: 'Rellena bien todos los campos'
@@ -133,12 +133,12 @@ const uploadSignup = async (req, res) => {
 
                 const peticion = await consulta(`aut/`, 'post', body)
                 const peticionJson = await peticion.json()
+                console.log(peticionJson)
 
                 if (peticionJson.ok) {
-                    const peticionUser = await consulta(`aut/?email=${email}`, 'get')
-                    const peticionUserJson = await peticionUser.json()
-                    const token = await generarJwt(peticionUserJson.data[0].id_author, peticionUserJson.data[0].name)
-                    res.cookie('xtoken', token)
+                    
+                   
+                    res.cookie('xtoken', peticionJson.token)
                     res.cookie('email', `${email}`)
                     res.redirect('/entries')
 
@@ -154,7 +154,7 @@ const uploadSignup = async (req, res) => {
         } catch (error) {
             res.render('error', {
                 title: 'error de registro',
-                msg: 'El email no es válido'
+                msg: error
             })
         }
     }

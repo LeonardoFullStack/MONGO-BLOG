@@ -37,7 +37,7 @@ const validarJwt = (req, res, next) => {
 }
 
 const validarJwtAdmin = (req, res, next) => {
-    
+   
        
     const zToken = req.cookies['ztoken'];
      

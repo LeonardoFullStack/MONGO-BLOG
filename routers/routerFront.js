@@ -33,7 +33,7 @@ router.get('/myEntries/',validarJwt, myEntries)
 router.get('/post',validarJwt, postEntry)
 router.post('/post',[validarJwt,upload.single('entryImage')], uploadEntry)
 router.get('/edit/:indexEntry',validarJwt, editEntry)
-router.post('/edit/',validarJwt, updateEntry)
+router.post('/edit/',[validarJwt,upload.single('entryImage')],validarJwt, updateEntry)
 router.get('/logout',validarJwt, logOut)
 
 

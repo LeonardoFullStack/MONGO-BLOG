@@ -2,6 +2,7 @@ const express = require('express')
 const app = express();
 const cookieParser = require('cookie-parser')
 const { consulta } = require('../helpers/dbConnect')
+const {errorMsgs} = require('../helpers/errorMsg')
 
 
 
@@ -10,7 +11,7 @@ const adminIndex =async (req,res)  => {
     try {
         const peticion = await consulta('entries/')
         const peticionJson = await peticion.json()
-
+console.log(peticionJson.data)
         res.render('admin/index', {
             title: 'Últimas entradas',
             msg: 'Consulta aqui todas las entradas',
@@ -29,29 +30,31 @@ const postEntry = async (req, res) => {
 
     res.render('admin/post', {
         title: 'Escribe una entrada',
-        msg: 'Rellena los campos'
+        msg: 'Rellena los campos',
+        errors:false
     })
 }
 
+
+
 const uploadEntry = async (req, res) => {
+
     let { email } = req.cookies
+    
+    const { title, extract, content,  category } = req.body
+    const entryImage = req.file ? `/media/uploads/${req.file.filename}` : 'https://aeroclub-issoire.fr/wp-content/uploads/2020/05/image-not-found.jpg'; 
+    
+    const body = { email,entryImage, ...req.body }
 
-    const { title, extract, content, entryImage, category } = req.body
-    const body = { email, ...req.body }
 
-
-    if (!extract || !title || !content || !entryImage || !category) {
-        res.render('admin/post', {
-            title: 'error de validación',
-            msg: 'Rellena bien todos los campos'
-        })
-    } else {
+    
 
         try {
+            
             const allMyEntries = await consulta(`entries/?email=${email}`, 'get')
             const entriesJson = await allMyEntries.json()
             const sameEntries = entriesJson.data.filter((item) => item.title == title)
-
+           
             if (sameEntries.length == 0) { //validación para no repetir entrada
                 
                 const peticion = await consulta('entries/', 'post', body)
@@ -60,19 +63,27 @@ const uploadEntry = async (req, res) => {
                 if (peticionJson.ok) {
                     res.render('admin/info', {
                         title:'Entrada creada',
-                        msg:'Entrada creada con éxito!'
+                        msg:'Entrada creada con éxito!',
+                        
                     })
-                } else {
+                }else if(peticionJson.errores) {
+                    const errores = errorMsgs(peticionJson.errores)
+                    console.log(body, errores)
                     res.render('admin/post', {
-                        title: 'error',
-                        msg: 'Error al conectar con la base de datos'
+                        title: 'Campos incorrectos',
+                        msg: 'Rellena bien los campos',
+                        data: body,
+                        errors: true,
+                        errores
+                        
                     })
-                }
+                } 
             } else {
-                
+               
                 res.render('admin/post', {
                     title: 'error',
-                    msg: 'Ya tienes una entrada con ese título!'
+                    msg: 'Ya tienes una entrada con ese título!',
+                    errors:false
                 })
             }
 
@@ -80,10 +91,10 @@ const uploadEntry = async (req, res) => {
         } catch (error) {
             res.render('admin/error', {
                 title: 'error',
-                msg: 'Contacta con el administrador'
+                msg: error,
             })
         }
-    }
+    
 
 }
 
@@ -173,7 +184,7 @@ const getSearch = async (req, res) => {
 
 const editEntry = async (req, res) => {
     const entry = req.params.id
-    let { email } = req.cookies
+
 
     try {
         const allMyEntries = await consulta(`entries/one/${entry}`, 'get')
@@ -195,60 +206,56 @@ const editEntry = async (req, res) => {
 }
 
 const updateEntry = async (req, res) => {
+    let { title, oldTitle, extract, content, category, oldImage, email } = req.body
+
+    const entryImage = req.file ? `/media/uploads/${req.file.filename}` : oldImage; 
+
+  
    
-    const { title, extract, content, entryImage, category , idEntry} = req.body
-    
-    const { email } = req.cookies
-    const body = { email, ...req.body}
-    
-    if (!extract || !title || !content || !entryImage || !category) {
+
+    if (!extract || !title || !content || !category) {
         res.render('admin/error', {
             title: 'error de validación',
-            msg: 'Rellena bien todos los campos'
+            msg: 'Rellena bien todos los campos',
+            
         })
 
 
-        
-    } else {
-        try {
-            const allMyEntries = await consulta(`entries/?email=${email}`, 'get')
-            const entriesJson = await allMyEntries.json()
-            const sameEntries = entriesJson.data.filter((item) => item.title == title)
+    }
 
-            if (sameEntries.length == 0) { //validación para no repetir entrada
-                
-                const peticion = await consulta(`entries/editId/${idEntry}`, 'put', body)
+    const body = {email, title,  extract, content, entryImage, category,}
+     
+        try {
+            
+
+                const peticion = await consulta(`entries/${oldTitle}`, 'put', body)
                 const peticionJson = await peticion.json()
-                
+               console.log(peticionJson)
                 if (peticionJson.ok) {
                     res.render('admin/info', {
                         title:'Entrada actualizada',
-                        msg:'Entrada actualizada con éxito!'
+                        msg:'Entrada actualizada con éxito!',
+                        
                     })
-                
                 } else {
-                    
-                    res.render('post', {
+                    res.render('admin/post', {
                         title: 'error',
-                        msg: 'Error al conectar con la base de datos'
+                        msg: 'Error al conectar con la base de datos',
+                        errors: false
+                        
                     })
                 }
-            } else {
-                
-                res.render('admin/post', {
-                    title: 'error',
-                    msg: 'Ya tienes una entrada con ese título!'
-                })
-            }
+            
 
 
         } catch (error) {
-            res.render('error', {
+            res.render('admin/error', {
                 title: 'error',
-                msg: 'Contacta con el administrador'
+                msg: 'Contacta con el administrador',
+                
             })
         }
-    }
+    
 }
 
 const viewOne = async (req,res) => {
@@ -256,6 +263,7 @@ const viewOne = async (req,res) => {
     try {
         const peticion = await consulta(`entries/one/${id}`, 'get')
         const peticionJson = await peticion.json()
+        console.log(peticionJson)
        
         if (peticionJson.ok) {
             

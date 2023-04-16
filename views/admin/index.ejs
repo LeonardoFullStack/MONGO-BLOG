@@ -1,49 +1,73 @@
 <%- include('partials/header.ejs') %>
 <main>
+
+    <form action="/search" method="post" class="search">
+        <input type="text" name="search">
+        <input type="submit" value="Buscar">
+    </form>
 <h1>
     <%= title %>
 </h1>
 <p>
     <%= msg %>
 </p>
-   
-    <form action="/admin/search" method="post" class="search">
-        <input type="text" name="search">
-        <input type="submit" value="Buscar">
-    </form>
-<% data.forEach(element => { %>
-    <div class="container">
-        <div class="gridTitle">
-            <%= element.title %>
-        </div>
-        <div class="gridDate">
-            <%= element.date %>
-        </div>
-        <div class="gridContent">
-            <%= element.extract %>
-        </div>
-        <div class="gridImage">
-            <img class="entryImage" src="<%= element.entryimage %>">
-        </div>
-        <div class="gridEdit">
-            
-        <a href="viewOne/<%= element.id_entry %>">
-            <button>
-                Leer más
-            </button>
-        </a>
-        <a href="edit/<%= element.id_entry %>">
-            <button>
-                editar
-            </button>
-        </a>
-        </div>
-        <div class="gridName">
-            <%= element.surname %>
-        </div>
-          
-    </div> 
-<% }) %>
+    
+<table>
+    <thead>
+        <th>
+            Título
+        </th>
+        <th>
+            Estracto
+        </th>
+        <th>
+            Autor
+        </th>
+        <th>
+            Fecha
+        </th>
+        <th>
+            Editar
+        </th>
+    </thead>
+    <tbody>
+        <% data.forEach(element => { %>
+            <tr>
+                <td>
+                    <%= element.title %>
+                </td>
+                <td>
+                    <%= element.extract %>
+                </td>
+                <td>
+                    <%= element.surname %>
+                </td>
+                <td>
+                    <%= element.date %>
+                </td>
+                <td>
+                    <a href="viewOne/<%= element.id_entry %>">
+                        <button>
+                            Leer más
+                        </button>
+                    </a>
+                    <a href="edit/<%= element.id_entry %>">
+                        <button>
+                            editar
+                        </button> 
+                        </a>
+                        <a href="delete/<%= element.id_entry %>">
+                            <button>
+                                borrar
+                            </button> 
+                            </a>
+                </td>
+            </tr>
+            <% }) %>
+    </tbody>
+</table>
+    
+
 
 </main>
 <%- include('partials/footer.ejs') %>

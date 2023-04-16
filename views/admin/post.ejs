@@ -6,14 +6,33 @@
 <p>
     <%= msg %>
 </p>
-<form method="post" action="/admin/post" class="updateForm">
-    <input type="text" name="title" placeholder="título">
-    <input type="text" name="extract" placeholder="Estracto">
-    <input type="text" name="content" placeholder="Contenido">
-    <input type="text" name="entryImage" placeholder="Imagen">
-    <input type="text" name="category" placeholder="Categoría">
-    <input type="submit" value="Publicar">
+<% if (errors) { %>
+    <p>
+        Han faltado los campos:
+        <% errores.input.forEach(element => { %>
+          <%= element %>
+        <% }) %>
+    </p>
+    <form method="post" action="/admin/post/" class="updateForm" enctype="multipart/form-data">
+        <input type="text" name="title" placeholder="títulos" value="<%= data.title %>">
+       <input type="text" name="extract" placeholder="Estracto" value="<%= data.extract %>">
+       <textarea name="content" placeholder="Contenido"><%= data.content %></textarea> 
+       <input type="file" name="entryImage">
+        <input type="text" name="category" placeholder="Categoría" value="<%= data.category %>"> 
+        <input type="submit" value="Publicar">
 
-</form>
+<% } else { %>
+
+    <form method="post" action="/admin/post/" class="updateForm" enctype="multipart/form-data">
+        <input type="text" name="title" placeholder="títulos">
+       <input type="text" name="extract" placeholder="Estracto">
+       <textarea name="content" placeholder="Contenido"></textarea> 
+       <input type="file" name="entryImage">
+        <input type="text" name="category" placeholder="Categoría"> 
+        <input type="submit" value="Publicar">
+   
+   </form>
+
+ <% } %>
 </main>
 <%- include('partials/footer.ejs') %>
