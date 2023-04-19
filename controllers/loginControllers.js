@@ -84,7 +84,7 @@ const checkLogin = async (req, res) => {
 
             }
         } catch (error) {
-            
+            console.log(error,'error')
             res.render('error', {
                 title: 'error de conexión',
                 msg: 'Contacta con el administrador'
