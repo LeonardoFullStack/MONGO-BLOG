@@ -2,8 +2,8 @@ const express = require('express')
 const app = express();
 const cookieParser = require('cookie-parser')
 const { consulta } = require('../helpers/dbConnect')
-const {ifLogged} = require('../helpers/isLogged')
-const {errorMsgs} = require('../helpers/errorMsg')
+const { ifLogged } = require('../helpers/isLogged')
+const { errorMsgs } = require('../helpers/errorMsg')
 
 
 /**
@@ -17,16 +17,17 @@ const {errorMsgs} = require('../helpers/errorMsg')
  */
 const showEntries = async (req, res) => {
     const isLogged = ifLogged(req)
-    const page = req.query.pag
-    
-    console.log('paso')
+    let page;
+
+    if (req.query.pag == undefined)  page = 1
+    else page = req.query.pag
 
     try {
         const pageKnew = await consulta('entries/');
         const pageKnewJson = await pageKnew.json()
 
         const pages = Math.ceil(pageKnewJson.data.length / 4)
-       
+
 
         const peticion = await consulta(`entries?pag=${page}`)
         const peticionJson = await peticion.json()
@@ -56,7 +57,7 @@ const postEntry = async (req, res) => {
         title: 'Escribe una entrada',
         msg: 'Rellena los campos',
         isLogged,
-        errors:false
+        errors: false
     })
 }
 
@@ -74,65 +75,65 @@ const uploadEntry = async (req, res) => {
 
     const isLogged = ifLogged(req)
     let { email } = req.cookies
-    
-    const { title, extract, content,  category } = req.body
-    const entryImage = req.file ? `/media/uploads/${req.file.filename}` : 'https://aeroclub-issoire.fr/wp-content/uploads/2020/05/image-not-found.jpg'; 
-    
-    const body = { email,entryImage, ...req.body }
+
+    const { title, extract, content, category } = req.body
+    const entryImage = req.file ? `/media/uploads/${req.file.filename}` : 'https://aeroclub-issoire.fr/wp-content/uploads/2020/05/image-not-found.jpg';
+
+    const body = { email, entryImage, ...req.body }
 
 
-    
 
-        try {
-            
-            const allMyEntries = await consulta(`entries/?email=${email}`, 'get')
-            const entriesJson = await allMyEntries.json()
-            const sameEntries = entriesJson.data.filter((item) => item.title == title)
-           
-            if (sameEntries.length == 0) { //validación para no repetir entrada
-                
-                const peticion = await consulta('entries/', 'post', body)
-                const peticionJson = await peticion.json()
-                
-                if (peticionJson.ok) {
-                    res.render('info', {
-                        title:'Entrada creada',
-                        msg:'Entrada creada con éxito!',
-                        isLogged
-                    })
-                }else if(peticionJson.errores) {
-                    const errores = errorMsgs(peticionJson.errores)
-                   
-                    res.render('post', {
-                        title: 'Campos incorrectos',
-                        msg: 'Rellena bien los campos',
-                        data: body,
-                        isLogged,
-                        errors: true,
-                        errores
-                        
-                    })
-                } 
-            } else {
-               
+
+    try {
+
+        const allMyEntries = await consulta(`entries/?email=${email}`, 'get')
+        const entriesJson = await allMyEntries.json()
+        const sameEntries = entriesJson.data.filter((item) => item.title == title)
+
+        if (sameEntries.length == 0) { //validación para no repetir entrada
+
+            const peticion = await consulta('entries/', 'post', body)
+            const peticionJson = await peticion.json()
+
+            if (peticionJson.ok) {
+                res.render('info', {
+                    title: 'Entrada creada',
+                    msg: 'Entrada creada con éxito!',
+                    isLogged
+                })
+            } else if (peticionJson.errores) {
+                const errores = errorMsgs(peticionJson.errores)
+
                 res.render('post', {
-                    title: 'error',
-                    msg: 'Ya tienes una entrada con ese título!',
+                    title: 'Campos incorrectos',
+                    msg: 'Rellena bien los campos',
+                    data: body,
                     isLogged,
-                    errors:false
+                    errors: true,
+                    errores
+
                 })
             }
+        } else {
 
-
-        } catch (error) {
-            res.render('error', {
+            res.render('post', {
                 title: 'error',
-                msg: error,
+                msg: 'Ya tienes una entrada con ese título!',
                 isLogged,
-                errors:false
+                errors: false
             })
         }
-    
+
+
+    } catch (error) {
+        res.render('error', {
+            title: 'error',
+            msg: error,
+            isLogged,
+            errors: false
+        })
+    }
+
 
 }
 
@@ -211,7 +212,7 @@ const getSearch = async (req, res) => {
         try {
             const peticion = await consulta('entries/', 'get')
             const peticionJson = await peticion.json()
-            
+
             if (peticionJson.ok) {
                 let pattern = new RegExp(search, 'i')
 
@@ -274,7 +275,7 @@ const editEntry = async (req, res) => {
     try {
         const allMyEntries = await consulta(`entries/one/${entry}`, 'get')
         const entriesJson = await allMyEntries.json()
-        
+
         res.render('update', {
             title: 'Modificar  entrada',
             msg: 'Modifica aquí la entrada',
@@ -315,9 +316,9 @@ const updateEntry = async (req, res) => {
     const isLogged = ifLogged(req)
     let { title, oldTitle, extract, content, category, oldImage } = req.body
     const { email } = req.cookies
-    const entryImage = req.file ? `../media/uploads/${req.file.filename}` : oldImage; 
-  
-    
+    const entryImage = req.file ? `../media/uploads/${req.file.filename}` : oldImage;
+
+
 
     if (!extract || !title || !content || !category) {
         res.render('error', {
@@ -329,38 +330,38 @@ const updateEntry = async (req, res) => {
 
     }
 
-    const body = {email, title,  extract, content, entryImage, category,}
-     
-        try {
-            
+    const body = { email, title, extract, content, entryImage, category, }
 
-                const peticion = await consulta(`entries/${oldTitle}`, 'put', body)
-                const peticionJson = await peticion.json()
-              
-                if (peticionJson.ok) {
-                    res.render('info', {
-                        title:'Entrada actualizada',
-                        msg:'Entrada actualizada con éxito!',
-                        isLogged
-                    })
-                } else {
-                    res.render('post', {
-                        title: 'error',
-                        msg: 'Error al conectar con la base de datos',
-                        isLogged
-                    })
-                }
-            
+    try {
 
 
-        } catch (error) {
-            res.render('error', {
+        const peticion = await consulta(`entries/${oldTitle}`, 'put', body)
+        const peticionJson = await peticion.json()
+
+        if (peticionJson.ok) {
+            res.render('info', {
+                title: 'Entrada actualizada',
+                msg: 'Entrada actualizada con éxito!',
+                isLogged
+            })
+        } else {
+            res.render('post', {
                 title: 'error',
-                msg: 'Contacta con el administrador',
+                msg: 'Error al conectar con la base de datos',
                 isLogged
             })
         }
-    
+
+
+
+    } catch (error) {
+        res.render('error', {
+            title: 'error',
+            msg: 'Contacta con el administrador',
+            isLogged
+        })
+    }
+
 }
 
 
@@ -375,19 +376,19 @@ const updateEntry = async (req, res) => {
  * @returns {void}
  * @throws {Error} Si hay un error de conexión.
  */
-const viewOne = async (req,res) => {
+const viewOne = async (req, res) => {
     const isLogged = ifLogged(req)
     const id = req.params.id
     try {
         const peticion = await consulta(`entries/one/${id}`, 'get')
         const peticionJson = await peticion.json()
-       
+
         if (peticionJson.ok) {
-            
+
             res.render('one', {
                 title: `Entrada: ${peticionJson.data[0].title}`,
                 msg: 'La entrada al completo',
-                data:peticionJson.data[0],
+                data: peticionJson.data[0],
                 isLogged
             })
         } else {

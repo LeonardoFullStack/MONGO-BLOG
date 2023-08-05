@@ -19,7 +19,7 @@ const upload = multer({ storage: storage })
 
 
 
-router.get('/', getIndex)
+router.get('/', showEntries)
 router.get('/signup', signup)
 router.post('/signup', uploadSignup)
 router.post('/log', checkLogin)
