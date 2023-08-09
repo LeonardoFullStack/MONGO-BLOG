@@ -14,30 +14,28 @@
 <% if (query) { %>
     <% data.forEach(element => { %>
         <div class="container">
-            <div class="gridTitle">
-                <%= element.title %>
-            </div>
-            
-            
-            <div class="gridImage">
-                <div class="gridContent">
-                    <%= element.extract %>
-                </div>
-                <img class="entryImage" src="<%= element.entryimage %>">
-            </div>
-            <div class="gridEdit">
                 
-            <a href="/viewOne/<%= element.id_entry %>">
-                <button>
-                    Leer más
-                </button>
-            </a>
+            <img class="avatar" src="https://conteudo.imguol.com.br/c/entretenimento/80/2017/04/25/a-atriz-zoe-saldana-como-neytiri-em-avatar-1493136439818_v2_900x506.jpg.webp"/>
+            <div class="topSideInfo">
+                <span class="name">@<%= element.name %></span>
+                <div class="dateAndHashtag">
+                    <span><%= element.date %></span>
+                    <span>#<%= element.category %></span>
+                </div>
             </div>
-            <div class="gridName">
-                <%= element.surname %> , <%= element.date %>
+            <div class="content">
+                <%= element.content %>
             </div>
-              
-        </div> 
+            <img class="entryImage" src="<%= element.entryimage %>" alt="Imagen de la entrada">
+            <div class="botSideInfo">
+                <span>
+                    5 respuestas
+                </span>
+                <a>
+                    Ver hilo
+                </a>
+            </div>
+            </div>
         <% }) %>
 <% } %>
 </main>

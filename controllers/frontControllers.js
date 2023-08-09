@@ -15,6 +15,15 @@ const { errorMsgs } = require('../helpers/errorMsg')
  * @param {object} res - Objeto de respuesta HTTP.
  * @throws {Error} Si hay un error de conexión.
  */
+
+const showLogin = (req,res) => {
+    res.render('login', {
+        title: 'login',
+        msg: 'Consulta aqui todas las entradas',
+    })
+}
+
+
 const showEntries = async (req, res) => {
     const isLogged = ifLogged(req)
     let page;
@@ -23,8 +32,10 @@ const showEntries = async (req, res) => {
     else page = req.query.pag
 
     try {
-        const pageKnew = await consulta('entries/');
+        console.log('paso')
+        const pageKnew = await consulta('entries/', 'get');
         const pageKnewJson = await pageKnew.json()
+        console.log(pageKnewJson)
 
         const pages = Math.ceil(pageKnewJson.data.length / 4)
 
@@ -43,7 +54,7 @@ const showEntries = async (req, res) => {
     } catch (error) {
         res.render('error', {
             title: 'Error de conexión',
-            msg: 'Contacta con el administrador'
+            msg: error
         })
     }
 
@@ -52,12 +63,14 @@ const showEntries = async (req, res) => {
 }
 
 const postEntry = async (req, res) => {
+    const userName = req.userName;
     const isLogged = ifLogged(req)
     res.render('post', {
         title: 'Escribe una entrada',
         msg: 'Rellena los campos',
         isLogged,
-        errors: false
+        errors: false,
+        userName
     })
 }
 
@@ -72,28 +85,25 @@ const postEntry = async (req, res) => {
  * @throws {Error} Si hay un error de conexión.
  */
 const uploadEntry = async (req, res) => {
-
+    const userName = req.userName;
+    const name = userName;
     const isLogged = ifLogged(req)
-    let { email } = req.cookies
+    console.log(isLogged,userName)
+
 
     const { title, extract, content, category } = req.body
     const entryImage = req.file ? `/media/uploads/${req.file.filename}` : 'https://aeroclub-issoire.fr/wp-content/uploads/2020/05/image-not-found.jpg';
 
-    const body = { email, entryImage, ...req.body }
-
+    const body = { name, entryImage, ...req.body }
+    console.log(body)
 
 
 
     try {
 
-        const allMyEntries = await consulta(`entries/?email=${email}`, 'get')
-        const entriesJson = await allMyEntries.json()
-        const sameEntries = entriesJson.data.filter((item) => item.title == title)
-
-        if (sameEntries.length == 0) { //validación para no repetir entrada
-
             const peticion = await consulta('entries/', 'post', body)
             const peticionJson = await peticion.json()
+            console.log(req.body)
 
             if (peticionJson.ok) {
                 res.render('info', {
@@ -110,19 +120,12 @@ const uploadEntry = async (req, res) => {
                     data: body,
                     isLogged,
                     errors: true,
-                    errores
+                    errores,
+                    userName
 
                 })
             }
-        } else {
-
-            res.render('post', {
-                title: 'error',
-                msg: 'Ya tienes una entrada con ese título!',
-                isLogged,
-                errors: false
-            })
-        }
+       
 
 
     } catch (error) {
@@ -192,6 +195,7 @@ const myEntries = async (req, res) => {
  * @throws {Error} Si hay un error de conexión.
  */
 const getSearch = async (req, res) => {
+
     const isLogged = ifLogged(req)
     const { search } = req.body
     if (search == '') {
@@ -212,6 +216,7 @@ const getSearch = async (req, res) => {
         try {
             const peticion = await consulta('entries/', 'get')
             const peticionJson = await peticion.json()
+            console.log(peticionJson)
 
             if (peticionJson.ok) {
                 let pattern = new RegExp(search, 'i')
@@ -386,7 +391,7 @@ const viewOne = async (req, res) => {
         if (peticionJson.ok) {
 
             res.render('one', {
-                title: `Entrada: ${peticionJson.data[0].title}`,
+                title: `${peticionJson.data[0].title}`,
                 msg: 'La entrada al completo',
                 data: peticionJson.data[0],
                 isLogged
@@ -418,5 +423,6 @@ module.exports = {
     getSearch,
     editEntry,
     updateEntry,
-    viewOne
+    viewOne,
+    showLogin
 }

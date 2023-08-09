@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router();
 const bodyParser = require('body-parser')
 const {getIndex, checkLogin, logOut, signup, uploadSignup} = require('../controllers/loginControllers')
-const {showEntries, postEntry, uploadEntry, myEntries, getSearch,editEntry,updateEntry, viewOne} = require('../controllers/frontControllers')
+const {showEntries, postEntry, uploadEntry, myEntries, getSearch,editEntry,updateEntry, viewOne, showLogin} = require('../controllers/frontControllers')
 const {validarJwt,validarJwtAdmin} = require('../middleware/validarJwt')
 const multer  = require('multer')
 
@@ -20,6 +20,7 @@ const upload = multer({ storage: storage })
 
 
 router.get('/', showEntries)
+router.get('/login', showLogin)
 router.get('/signup', signup)
 router.post('/signup', uploadSignup)
 router.post('/log', checkLogin)

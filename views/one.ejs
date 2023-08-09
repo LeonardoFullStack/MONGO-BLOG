@@ -1,41 +1,31 @@
 <%- include('partials/header.ejs') %>
 <main>
-<h1>
-    <%= title %>
-</h1>
-<p>
-    <%= msg %>
-</p>
-<div class="containerOne">
-    <div class="gridTitle">
-        <%= data.title %> ,  <%= data.surname %> (<%= data.date %>)  
-    </div>
-    <!-- <div class="gridDate">
-        <%= data.date %>
-    </div> -->
-    <div class="gridContentOne">
-        
-       <p>  <%= data.content %></p>
-    </div>
-    <div class="gridImage">
-        <img class="entryImage" src="<%= data.entryimage %>">
-    </div>
-    
-
-    
-        <div class="gridEditOne">
-            
-            <p>
-                Estracto
-            </p>
-            <p>
-                <%= data.extract %>
-            </p>
-        
+<section class="viewone">
+    <div class="topSideInfo">
+        <div class="viewOneImage">
+        <img alt="avatar" src="https://conteudo.imguol.com.br/c/entretenimento/80/2017/04/25/a-atriz-zoe-saldana-como-neytiri-em-avatar-1493136439818_v2_900x506.jpg.webp"/>
         </div>
-        
-   
-      
-</div> 
+        <span class="name">@<%= data.name %></span>
+        <div class="dateAndCat">
+            <span class="date">
+                <%= data.date %>
+            </span>
+            <span>
+                #<%= data.category %>
+            </span>
+        </div>
+    </div>
+    <h2>
+        <%= data.title %>
+    </h2>
+    <div class="contentInfo">
+        <%= data.content %>
+    </div>
+
+
+</section>
+<h2 class="titles">
+    Respuestas:
+</h2>
 </main>
 <%- include('partials/footer.ejs') %>

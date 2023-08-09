@@ -7,8 +7,12 @@
     font-family: 'Borel', cursive;
 }
 
+nav {
+    background-color: $azul-clarito;
+}
+
 main {
-    max-width: 300px;
+/*     max-width: 300px; */
     margin:0 auto;
 }
 
@@ -50,7 +54,7 @@ nav {
 
 
 .displayNone {
-    max-height: calc(200px + 20px)!important;
+    max-height: calc(300px + 20px)!important;
     border:1px solid $color-indigo;
     z-index:10
 }

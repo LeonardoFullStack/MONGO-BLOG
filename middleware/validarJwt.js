@@ -27,10 +27,8 @@ const validarJwt = (req, res, next) => {
         try {
 
             const payload = jwt.verify(xToken, process.env.JWT_SECRET_KEY);
-            
-            req.header.id = payload.uid
-            req.header.name = payload.name
-            
+            req.userId = payload.uid;
+            req.userName = payload.name;
 
         } catch (error) {
             return res.render('error', {

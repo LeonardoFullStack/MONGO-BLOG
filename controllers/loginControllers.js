@@ -38,7 +38,7 @@ const checkLogin = async (req, res) => {
     const { email, password } = req.body
 
     if (email == '' || password == '') {
-        res.render('index', {
+        res.render('error', {
             title: 'Error de validación',
             msg: 'Rellena los campos'
         })
@@ -48,41 +48,18 @@ const checkLogin = async (req, res) => {
             const peticion = await consulta(`aut/?email=${email}`, 'get')
             const peticionJson = await peticion.json()
             
-            
-
-            if (!peticionJson.ok) {
-                res.render('index', {
-                    title: 'Login fallido',
-                    msg: 'No hemos encontrado el usuario'
-                })
-            } else {
-               let passwordOk = bcrypt.compareSync(password, peticionJson.data[0].password)
-               if (passwordOk) {
-                if (peticionJson.data[0].isadmin) {
-                    
-                    res.locals.isLogged = true;
-                    
+            if (peticionJson.ok) {
+                if (peticionJson.tokenz) { //Cuando es admin hay ztoken
                     res.cookie('xtoken', peticionJson.token)
                     res.cookie('ztoken', peticionJson.tokenz)
-                    res.cookie('email', `${email}`)
                     res.redirect('/admin/?pag=1')
-                } else {
-
-
-                    
+                } else {// Y aquí cuando es un usuario normal
                     res.cookie('xtoken', peticionJson.token)
-                    res.cookie('email', `${email}`)
                     res.redirect('/entries?pag=1')
                 }
-               } else {
-                res.render('index', {
-                    title: 'Login fallido',
-                    msg: 'Credenciales incorrectas'
-                })
-               }
-                
-
             }
+            
+
         } catch (error) {
             console.log(error,'error')
             res.render('error', {
@@ -108,10 +85,7 @@ const logOut = (req, res) => {
     res.clearCookie('xtoken')
     res.clearCookie('ztoken')
     res.clearCookie('email');
-    res.render('index', {
-        title: 'Sesión cerrada',
-        msg: 'Sesión cerrada con éxito, haz login para comenzar'
-    })
+    res.redirect('/entries?pag=1')
 }
 
 /**
