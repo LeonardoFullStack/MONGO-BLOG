@@ -18,9 +18,9 @@ const validarJwt = (req, res, next) => {
         
 
         if (!xToken) {
-            return res.render('index', {
-                title: 'No has iniciado sesión',
-                msg: 'Inicia sesión para continuar'
+            res.render('error', {
+                title:'Falta iniciar sesión',
+                msg:'Tienes que iniciar sesión'
             })
         }
 

@@ -11,6 +11,7 @@ p {
 .search {
     display: grid;
     grid-template-columns: 80% 1fr;
+    margin:20px;
 
     input[type="text"] {
         border-top-left-radius: 10px;
@@ -31,8 +32,9 @@ h1 {
     display:grid;
     grid-template-columns: 70px 1fr;
     grid-template-rows: 50px auto 150px 40px;
-    border: 1px solid black;
-    margin-top: 10px;
+    border: 1px solid grey;
+    margin: 20px auto 0 auto;
+    max-width: 300px;
     padding: 10px;
     border-radius:10px;
     background-color: $azul-clarito;
@@ -49,14 +51,17 @@ h1 {
 
         .name {
             font-size:20px;
+            max-width: 130px;
+            overflow: hidden;
         }
     }
 
     .botSideInfo {
         grid-column: 1 / 3;
         display:grid;
-        grid-template-columns: 200px 1fr;
+        grid-template-columns: 1fr 80px;
         align-items: center;
+        margin-top:10px;
     }
 
     .avatar {
@@ -86,7 +91,6 @@ h1 {
 
 .pages {
     text-align: center;
-    width: 200px;
     margin:0 auto;
 
     .pageButton {

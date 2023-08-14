@@ -8,6 +8,7 @@ const bcrypt = require('bcryptjs')
 app.use(cookieParser())
 
 const getIndex = async (req, res) => {
+    console.log('kes esto')
     const { email } = req.cookies
     if (email) {
         res.redirect('/entries?pag=1')
@@ -37,6 +38,7 @@ const getIndex = async (req, res) => {
 const checkLogin = async (req, res) => {
     const { email, password } = req.body
 
+
     if (email == '' || password == '') {
         res.render('error', {
             title: 'Error de validación',
@@ -45,9 +47,9 @@ const checkLogin = async (req, res) => {
     } else {
 
         try {
-            const peticion = await consulta(`aut/?email=${email}`, 'get')
+            const peticion = await consulta(`aut/`, 'post', req.body)
             const peticionJson = await peticion.json()
-            
+
             if (peticionJson.ok) {
                 if (peticionJson.tokenz) { //Cuando es admin hay ztoken
                     res.cookie('xtoken', peticionJson.token)
@@ -58,10 +60,10 @@ const checkLogin = async (req, res) => {
                     res.redirect('/entries?pag=1')
                 }
             }
-            
+
 
         } catch (error) {
-            console.log(error,'error')
+            console.log(error, 'error')
             res.render('error', {
                 title: 'error de conexión',
                 msg: 'Contacta con el administrador'
@@ -84,7 +86,6 @@ const checkLogin = async (req, res) => {
 const logOut = (req, res) => {
     res.clearCookie('xtoken')
     res.clearCookie('ztoken')
-    res.clearCookie('email');
     res.redirect('/entries?pag=1')
 }
 
@@ -116,8 +117,7 @@ const signup = async (req, res) => {
 
 const uploadSignup = async (req, res) => {
     const { name, surname, email, password } = req.body
-    let peticionUser1, peticionUserJson1
-    if (!name || !surname || !email || !password ) {
+    if (!name || !surname || !email || !password) {
         res.render('error', {
             title: 'error de validación',
             msg: 'Rellena bien todos los campos'
@@ -127,44 +127,45 @@ const uploadSignup = async (req, res) => {
             title: 'error de validación',
             msg: 'La contraseña debe tener 4 o más caracteres'
         })
+        
+    } else if (name.length > 8) {
+        res.render('error', {
+            title: 'error de validación',
+            msg: 'El campo nombre no puede tener mas de 8 caracteres'
+        })
+        
     } else {
 
+        const avatar = req.file ? `/media/uploads/${req.file.filename}` : 'http://localhost:4001/media/uploads/encapuchao.png';
 
         const body = {
+            avatar,
             ...req.body
         }
 
         try {
 
-            peticionUser1 = await consulta(`aut/?email=${email}`, 'get')
-            peticionUserJson1 = await peticionUser1.json()
-            if (peticionUserJson1.ok) {
+            const req = await consulta('aut/create', 'post', body);
+            const response = await req.json()
+
+
+            if (response.ok) {
+                //Aqui el registro ha ido bien
+                    res.cookie('xtoken', response.token)
+                    res.redirect('/entries')
+
+            } else {
                 res.render('error', {
                     title: 'error de validación',
                     msg: 'Ya hay un usuario con ese email'
                 })
-            } else {
-                let salt = bcrypt.genSaltSync(10);
-                body.password = bcrypt.hashSync(body.password, salt)
-
-                const peticion = await consulta(`aut/`, 'post', body)
-                const peticionJson = await peticion.json()
-               
-
-                if (peticionJson.ok) {
-                    
-                   
-                    res.cookie('xtoken', peticionJson.token)
-                    res.cookie('email', `${email}`)
-                    res.redirect('/entries')
-
-                } else {
-                    res.render('error', {
-                        title: 'error de registro',
-                        msg: 'error de  registro'
-                    })
-                }
             }
+
+
+
+
+
+
 
 
         } catch (error) {

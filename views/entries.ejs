@@ -14,9 +14,9 @@
 
 
         <% data.forEach(element=> { %>
-            <div class="container">
+            <article class="container">
                 
-                <img class="avatar" src="https://conteudo.imguol.com.br/c/entretenimento/80/2017/04/25/a-atriz-zoe-saldana-como-neytiri-em-avatar-1493136439818_v2_900x506.jpg.webp"/>
+                <img class="avatar" src="<%= element.authavatar %>"/>
                 <div class="topSideInfo">
                     <span class="name">@<%= element.name %></span>
                     <div class="dateAndHashtag">
@@ -30,13 +30,13 @@
                 <img class="entryImage" src="<%= element.entryimage %>" alt="Imagen de la entrada">
                 <div class="botSideInfo">
                     <span>
-                        5 respuestas
+                        <%= element.replies %> respuestas
                     </span>
                     <a href="/viewone/<%= element.id_entry %>">
                         Ver hilo
                     </a>
                 </div>
-                </div>
+            </article>
             <% }) %>
                 <div class="pages">
                     <% for( let index=1; index <=pages; index++ ) { %>
@@ -48,7 +48,7 @@
                         </a>
 
                         <% } %>
-                </div>
+                    </div>
 
     </main>
     <%- include('partials/footer.ejs') %>

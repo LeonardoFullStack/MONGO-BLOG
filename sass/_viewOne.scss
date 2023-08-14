@@ -4,8 +4,9 @@
     background-color: $azul-clarito;
     border-radius: 10px;
     padding:10px;
-    margin:10px;
-    width:95%;
+    margin:20px auto;
+    width:90%;
+    max-width:337px;
     border:1px solid black;
 
     .topSideInfo {
@@ -48,6 +49,16 @@
         text-align: center;
         margin:10px;
     }
+
+    .entryImageOnView {
+        margin: 20px auto 10px auto;
+
+        img {
+            width:100%;
+            max-width:337px;
+            border-radius:10px;
+        }
+    }
 }
 
 .titles {
@@ -60,4 +71,59 @@
     background-color: white;
     border-radius: 10px;
     padding:10px;
+}
+
+.replies {
+    background-color: $azul-clarito;
+    border-radius: 10px;
+    padding:10px;
+    margin:20px auto;
+    width:90%;
+    max-width:337px;
+    border:1px solid black;
+    text-align: center;
+
+    
+
+    .topSideReply {
+        display:grid;
+        grid-template-columns: 60px 1fr 90px;
+
+        img {
+            width:100%;
+            max-width:63px;
+            border-radius:10px;
+        }
+
+        .replyName {
+            text-align: start;
+            margin-left:10px;
+        }
+    }
+
+    .textInfo {
+        margin:0 auto;
+    }
+
+    .botSideReply {
+        p {
+            width:90%;
+            margin:10px auto 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding:10px;
+
+        }
+    }
+
+}
+
+.singleReply {
+    padding-bottom:5px;
+    border-bottom: 1px solid black;
+    margin-bottom:10px;
+
+    .botSideReply {
+        margin-bottom:10px;
+    }
 }

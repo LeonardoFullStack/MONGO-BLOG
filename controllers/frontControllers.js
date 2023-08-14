@@ -25,14 +25,15 @@ const showLogin = (req,res) => {
 
 
 const showEntries = async (req, res) => {
-    const isLogged = ifLogged(req)
+    const isLogged = await ifLogged(req)
+
     let page;
 
     if (req.query.pag == undefined)  page = 1
     else page = req.query.pag
 
     try {
-        console.log('paso')
+
         const pageKnew = await consulta('entries/', 'get');
         const pageKnewJson = await pageKnew.json()
         console.log(pageKnewJson)
@@ -51,6 +52,7 @@ const showEntries = async (req, res) => {
             isLogged,
             pages
         })
+        
     } catch (error) {
         res.render('error', {
             title: 'Error de conexión',
@@ -64,7 +66,7 @@ const showEntries = async (req, res) => {
 
 const postEntry = async (req, res) => {
     const userName = req.userName;
-    const isLogged = ifLogged(req)
+    const isLogged = await ifLogged(req)
     res.render('post', {
         title: 'Escribe una entrada',
         msg: 'Rellena los campos',
@@ -87,23 +89,22 @@ const postEntry = async (req, res) => {
 const uploadEntry = async (req, res) => {
     const userName = req.userName;
     const name = userName;
-    const isLogged = ifLogged(req)
+    const isLogged = await ifLogged(req)
     console.log(isLogged,userName)
 
 
     const { title, extract, content, category } = req.body
-    const entryImage = req.file ? `/media/uploads/${req.file.filename}` : 'https://aeroclub-issoire.fr/wp-content/uploads/2020/05/image-not-found.jpg';
+    const entryImage = req.file ? `/media/uploads/${req.file.filename}` : 'http://localhost:4001/media/noimagetwiter.png';
 
     const body = { name, entryImage, ...req.body }
-    console.log(body)
 
 
 
     try {
 
-            const peticion = await consulta('entries/', 'post', body)
+            const peticion = await consulta('entries/create', 'post', body)
             const peticionJson = await peticion.json()
-            console.log(req.body)
+            
 
             if (peticionJson.ok) {
                 res.render('info', {
@@ -151,10 +152,12 @@ const uploadEntry = async (req, res) => {
  * @throws {Error} Si hay un error de conexión.
  */
 const myEntries = async (req, res) => {
-    const isLogged = ifLogged(req)
-    let { email } = req.cookies
+    const isLogged = await ifLogged(req)
+    const body = {
+        name:req.userName
+    }
     try {
-        const peticion = await consulta(`entries/?email=${email}`, 'get')
+        const peticion = await consulta(`entries/`, 'post', body)
         const peticionJson = await peticion.json()
         if (peticionJson.ok) {
             res.render('myEntries', {
@@ -196,7 +199,7 @@ const myEntries = async (req, res) => {
  */
 const getSearch = async (req, res) => {
 
-    const isLogged = ifLogged(req)
+    const isLogged = await ifLogged(req)
     const { search } = req.body
     if (search == '') {
         res.render('search', {
@@ -273,7 +276,7 @@ const getSearch = async (req, res) => {
  * @throws {Error} Si hay un error de conexión.
  */
 const editEntry = async (req, res) => {
-    const isLogged = ifLogged(req)
+    const isLogged = await ifLogged(req)
     const entry = req.params.indexEntry
     let { email } = req.cookies
 
@@ -318,7 +321,7 @@ const editEntry = async (req, res) => {
  * @throws {Error} Si hay un error de conexión.
  */
 const updateEntry = async (req, res) => {
-    const isLogged = ifLogged(req)
+    const isLogged = await ifLogged(req)
     let { title, oldTitle, extract, content, category, oldImage } = req.body
     const { email } = req.cookies
     const entryImage = req.file ? `../media/uploads/${req.file.filename}` : oldImage;
@@ -382,11 +385,12 @@ const updateEntry = async (req, res) => {
  * @throws {Error} Si hay un error de conexión.
  */
 const viewOne = async (req, res) => {
-    const isLogged = ifLogged(req)
+    const isLogged = await ifLogged(req)
     const id = req.params.id
     try {
         const peticion = await consulta(`entries/one/${id}`, 'get')
-        const peticionJson = await peticion.json()
+        const peticionJson = await peticion.json();
+
 
         if (peticionJson.ok) {
 
@@ -394,7 +398,9 @@ const viewOne = async (req, res) => {
                 title: `${peticionJson.data[0].title}`,
                 msg: 'La entrada al completo',
                 data: peticionJson.data[0],
-                isLogged
+                replies: peticionJson.replies,
+                isLogged,
+                id
             })
         } else {
             res.render('error', {
@@ -413,6 +419,31 @@ const viewOne = async (req, res) => {
     }
 }
 
+const uploadReply = async (req,res) => {
+    const {content, id_entry, name} = req.body
+
+    const body = {
+        content,
+        id_entry,
+        name
+    }
+    
+    try {
+        const request = await consulta('replies/createreply', 'post', body)
+        const response = await request.json()
+        
+        if (response.ok) {
+            res.redirect(`viewone/${id_entry}`)
+        }
+
+    } catch (error) {
+        res.render('error', {
+            title:'error de algo',
+            msg:'Error al registrar la respuesta'
+        })
+    }
+}
+
 
 
 module.exports = {
@@ -424,5 +455,6 @@ module.exports = {
     editEntry,
     updateEntry,
     viewOne,
-    showLogin
+    showLogin,
+    uploadReply
 }
