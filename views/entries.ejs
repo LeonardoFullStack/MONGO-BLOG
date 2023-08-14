@@ -14,43 +14,41 @@
 
 
         <% data.forEach(element=> { %>
-            <div class="container">
-                <div class="gridTitle">
-                    <%= element.title %>
-                </div>
-
-
-                <div class="gridImage">
-                    <div class="gridContent">
-                        <%= element.extract %>
+            <article class="container">
+                
+                <img class="avatar" src="<%= element.authavatar %>"/>
+                <div class="topSideInfo">
+                    <span class="name">@<%= element.name %></span>
+                    <div class="dateAndHashtag">
+                        <span><%= element.date %></span>
+                        <span>#<%= element.category %></span>
                     </div>
-                    <img class="entryImage" src="<%= element.entryimage %>" alt="Imagen de la entrada">
                 </div>
-                <div class="gridEdit">
-
-                    <a href="/viewOne/<%= element.id_entry %>">
-                        <button>
-                            Leer más
-                        </button>
+                <div class="content">
+                    <%= element.content %>
+                </div>
+                <img class="entryImage" src="<%= element.entryimage %>" alt="Imagen de la entrada">
+                <div class="botSideInfo">
+                    <span>
+                        <%= element.replies %> respuestas
+                    </span>
+                    <a href="/viewone/<%= element.id_entry %>">
+                        Ver hilo
                     </a>
                 </div>
-                <div class="gridName">
-                    <%= element.surname %> , <%= element.date %>
-                </div>
-
-            </div>
+            </article>
             <% }) %>
                 <div class="pages">
                     <% for( let index=1; index <=pages; index++ ) { %>
 
-                        <a href="/entries?pag=<%= index %>">
-                            <button>
+                        <a class="pageButton" href="/entries?pag=<%= index %>">
+                            
                                 <%= index %>
-                            </button>
+                            
                         </a>
 
                         <% } %>
-                </div>
+                    </div>
 
     </main>
     <%- include('partials/footer.ejs') %>

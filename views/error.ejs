@@ -1,17 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TwitZerg</title>
-    <link href="../css/main.css"  rel="stylesheet">
-</head>
-<body>
-    <header>
-       
-        
-    </header>
+<%- include('partials/header.ejs') %>
 <main>
 <h1>
     <%= title %>
@@ -19,6 +6,8 @@
 <p>
     <%= msg %>
 </p>
-<p><a href="javascript:history.go(-1)">Volver atrás</a></p>
+<a class="backLink" href="javascript:history.go(-1)"><img src="/media/descarga.png" alt="imagen de descarga">
+    <span>Volver atrás</span>
+</a>
 </main>
 <%- include('partials/footer.ejs') %>

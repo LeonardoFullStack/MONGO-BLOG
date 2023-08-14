@@ -18,19 +18,17 @@ const validarJwt = (req, res, next) => {
         
 
         if (!xToken) {
-            return res.render('index', {
-                title: 'No has iniciado sesión',
-                msg: 'Inicia sesión para continuar'
+            res.render('error', {
+                title:'Falta iniciar sesión',
+                msg:'Tienes que iniciar sesión'
             })
         }
 
         try {
 
             const payload = jwt.verify(xToken, process.env.JWT_SECRET_KEY);
-            
-            req.header.id = payload.uid
-            req.header.name = payload.name
-            
+            req.userId = payload.uid;
+            req.userName = payload.name;
 
         } catch (error) {
             return res.render('error', {
