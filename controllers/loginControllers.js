@@ -136,7 +136,7 @@ const uploadSignup = async (req, res) => {
         
     } else {
 
-        const avatar = req.file ? `/media/uploads/${req.file.filename}` : 'http://localhost:4001/media/uploads/encapuchao.png';
+        const avatar = req.file ? `/media/uploads/${req.file.filename}` : 'https://api-blog-ahz5.onrender.com/media/uploads/encapuchao.png';
 
         const body = {
             avatar,
